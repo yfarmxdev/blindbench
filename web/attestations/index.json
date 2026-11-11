@@ -1,0 +1,17 @@
+{
+ "0x835ab53d20294ef795906dff21ae4c045336aa26": {
+  "role": "model",
+  "model": "Qwen/Qwen3.8-27B",
+  "fetched_at": "2026-11-10T10:54:39.462Z"
+ },
+ "0xb98a789cdc4817275f5155593ba73ef2a957e779": {
+  "role": "gateway",
+  "model": null,
+  "fetched_at": "2026-11-10T12:49:42.317Z"
+ },
+ "0xfe0071895500a9755c18044948ab4f4e1a7f337e": {
+  "role": "model",
+  "model": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "fetched_at": "2026-11-10T12:49:39.178Z"
+ }
+}

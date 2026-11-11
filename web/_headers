@@ -1,0 +1,29 @@
+# Response headers for the hosted page (Cloudflare Pages reads this file).
+#
+# Content-Security-Policy: script comes only from this site's own files. The page's own
+# inline scripts need 'unsafe-inline' here; once they have started, the page adds a second,
+# stricter policy with a nonce made for that page load (see "Script policy" in index.html),
+# so nothing written into the page later can run as script. Styles, fonts, images, frames
+# and connections are open to https because a wallet chosen under "Connect wallet" runs in a
+# sandboxed frame that inherits this policy and loads its own look and talks to its own hosts.
+# The one other script address is the host's own visit counter (Cloudflare Web Analytics, no
+# cookies), which the host adds to the page it serves.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https:; font-src 'self' data: https:; img-src 'self' data: blob: https:; connect-src 'self' https: wss:; frame-src 'self' https:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+
+# Evidence bundles are public and meant to be fetched and rechecked from anywhere.
+/evidence/*
+  Access-Control-Allow-Origin: *
+
+# Hardware key proofs (Intel TDX quotes) are public too.
+/attestations/*
+  Access-Control-Allow-Origin: *
+
+/*.mjs
+  Content-Type: text/javascript; charset=utf-8

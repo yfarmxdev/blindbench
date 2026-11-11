@@ -1,0 +1,194 @@
+{
+ "version": "blindbench-evidence/1",
+ "dataset_root": "ff9d67e9d4a26f739ca7ac31f88a8f9ea7c1bca9c7921539ac2a5d2a02a1b2a2",
+ "grading": "checklist",
+ "usage": {
+  "model": {
+   "calls": 10,
+   "prompt_tokens": 13230,
+   "completion_tokens": 181850,
+   "reasoning_tokens": 153615
+  },
+  "judge": {
+   "calls": 7,
+   "prompt_tokens": 45861,
+   "completion_tokens": 200998,
+   "reasoning_tokens": 196669
+  }
+ },
+ "model": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+ "judge_model": "moonshotai/kimi-k2.6",
+ "endpoint": "https://cloud-api.near.ai/v1",
+ "sampling": {
+  "max_tokens": 32768,
+  "temperature": 0.6,
+  "judge_max_tokens": 32768,
+  "judge_temperature": 0,
+  "thinking": true,
+  "model_params": {
+   "chat_template_kwargs": {
+    "reasoning_effort": "low"
+   }
+  },
+  "judge_params": {},
+  "samples": 1,
+  "judge_passes": 1,
+  "judge_protocol": "v2"
+ },
+ "attestation": {
+  "level": "model-enclave",
+  "provider": null,
+  "provider_verdict": null,
+  "signing_addresses": [
+   "0xfe0071895500a9755c18044948ab4f4e1a7f337e"
+  ],
+  "gateway_addresses": [
+   "0xb98a789cdc4817275f5155593ba73ef2a957e779"
+  ],
+  "signing_algo": "ecdsa",
+  "nonce": "23cf8e4495b07bade26b4b963ca81c2fd430415e5fd4f6949190c47a846be005",
+  "report_sha256": "d167f3c24e30cbdbe769a1a42e5759e12126e759f79efe18e2644cd88881d135",
+  "simulated": false
+ },
+ "judge_attestation": {
+  "level": "gateway+3p-enclave",
+  "signing_addresses": [
+   "0xb98a789cdc4817275f5155593ba73ef2a957e779"
+  ],
+  "gateway_addresses": [],
+  "report_sha256": "d2ba5b033b183f9e2767c6170e9a2dca150fd348987b83993f9002ec64e5b5e8",
+  "simulated": false
+ },
+ "items": [
+  {
+   "index": 0,
+   "leaf": "2f4cc1348ad55ce795d1ceeb7aed466212c062db98cdab7f4cb2b8e8e88b6eff",
+   "request_sha256": "47e7f013b414a3742012973e0986092b21fd965c3eb0e14663a17dac46a24be7",
+   "response_sha256": "234a872fe3fd2d02120042f678f00ed238d6e5b094359e9f291ec01b4f2e43e6",
+   "chat_id": "chatcmpl-0d4e7948-80bf-4c74-bbab-1428f3582d14",
+   "signature": "0x0c39632cb5c4101c94b6341d4481cfcaf9123b4760a0ae4e8c12c5ad24df746312c116c535158093ba9a45f68f8b6dcc33fe84df38ac66dffc74c0c014f6571d1b",
+   "signed_text": "deepseek-ai/DeepSeek-V4.1-Flash-1017:47e7f013b414a3742012973e0986092b21fd965c3eb0e14663a17dac46a24be7:234a872fe3fd2d02120042f678f00ed238d6e5b094359e9f291ec01b4f2e43e6",
+   "signing_address": "0xfe0071895500a9755c18044948ab4f4e1a7f337e",
+   "thinking": false,
+   "empty_retry": true,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 1444,
+    "completion_tokens": 3805,
+    "reasoning_tokens": 0
+   },
+   "signature_kind": "provider_tee",
+   "signature_valid": true,
+   "score": 0.8222,
+   "judge": {
+    "request_sha256": "623048499f9e56b53536468520a92983d192203e9897a3006bdf9b9a425d6c63",
+    "response_sha256": "cf33262146fb3c52258560d1b3f3f72b2807ea55c9124cd320fe23931e2392bc",
+    "signature": "0x269bb716c88f2ec11513e2725dafdbcac0e6cb873f3ea92714f48f4fcc344b585b849a5d5558f26b518de9513d6de835d62927e03be0b59c5745cbb5eae13c0c1c",
+    "signed_text": "623048499f9e56b53536468520a92983d192203e9897a3006bdf9b9a425d6c63:cf33262146fb3c52258560d1b3f3f72b2807ea55c9124cd320fe23931e2392bc",
+    "signature_valid": true,
+    "attempt": 0,
+    "protocol": "v2",
+    "pass": 0
+   }
+  },
+  {
+   "index": 1,
+   "leaf": "0bdb1fbe6f13197b2eea4a44cb85f2e2b9c2e59d82615f4222295716afe78c22",
+   "request_sha256": "ee6643c82742fd35fbf11f41ed963f7894b174a261c84a04638d1369404079eb",
+   "response_sha256": "d39665c10dd1a28d79b5eefc22969c88a3d77cd47c0e9778a0c96bad9cf9f776",
+   "chat_id": "chatcmpl-657754a1-c951-466f-848d-fa6fcfb254e9",
+   "signature": "0x7271dcf46a55cafc8b6813541f455476a6ce898adf38bc80e21393cfc68ab2fe5b85d4c642341ec47a80fa6bb01cfa842897fe50f4c815040863f0187fef73da1b",
+   "signed_text": "deepseek-ai/DeepSeek-V4.1-Flash-1017:ee6643c82742fd35fbf11f41ed963f7894b174a261c84a04638d1369404079eb:d39665c10dd1a28d79b5eefc22969c88a3d77cd47c0e9778a0c96bad9cf9f776",
+   "signing_address": "0xfe0071895500a9755c18044948ab4f4e1a7f337e",
+   "thinking": true,
+   "empty_retry": false,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 663,
+    "completion_tokens": 14201,
+    "reasoning_tokens": 11546
+   },
+   "signature_kind": "provider_tee",
+   "signature_valid": true,
+   "score": 0.8226,
+   "judge": {
+    "request_sha256": "068b5a4622d16096d057dfccb5edb306a2d34e5becf1f978822391f999fdb69d",
+    "response_sha256": "aab0511bdd1220a0f39886e874482865a5c723121be1dd94cc41fe6747d13041",
+    "signature": "0x004c17d9d5b412978df05e7e19fd48720f6bc3624aeaa0e06a30d5058159308e0e62bff11376c94870adc641a9d58235515a1a4087cf6a004693914767af23121b",
+    "signed_text": "068b5a4622d16096d057dfccb5edb306a2d34e5becf1f978822391f999fdb69d:aab0511bdd1220a0f39886e874482865a5c723121be1dd94cc41fe6747d13041",
+    "signature_valid": true,
+    "attempt": 0,
+    "protocol": "v2",
+    "pass": 0
+   }
+  },
+  {
+   "index": 2,
+   "leaf": "ab295b264dae8cfb0c17a278309db715afc993429b4ad237b903f2cf83555428",
+   "request_sha256": "75fd23bb2d60c10ae028009f721498f06a4bef283bd25e15dc2607c8920565f1",
+   "response_sha256": "3a360fed583beb46a73356f03088b94181e48f907b017e6ec34b8564a13ae91f",
+   "chat_id": "chatcmpl-96605b76-5fbf-4bb2-8131-c4cd50e13db7",
+   "signature": "0x351068b662520d99623a40bd46816188b90cdb6845d8ed7240d8ea8e29d0ec390204e69bbcd204fb508f6554c70d764350a8356203b7e9c232af1e06c528df0e1b",
+   "signed_text": "deepseek-ai/DeepSeek-V4.1-Flash-1017:75fd23bb2d60c10ae028009f721498f06a4bef283bd25e15dc2607c8920565f1:3a360fed583beb46a73356f03088b94181e48f907b017e6ec34b8564a13ae91f",
+   "signing_address": "0xfe0071895500a9755c18044948ab4f4e1a7f337e",
+   "thinking": false,
+   "empty_retry": true,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 1319,
+    "completion_tokens": 4201,
+    "reasoning_tokens": 0
+   },
+   "signature_kind": "provider_tee",
+   "signature_valid": true,
+   "score": 0.8295,
+   "judge": {
+    "request_sha256": "bbb60e9cc7d322a3e7a563ee5e6e8a5ce38722aec24f0c59c5b1e24211f036ba",
+    "response_sha256": "e45303e2245993672bf6733e2cfcf317bb0c806ced8b2688f9388f14c3f8e610",
+    "signature": "0x04490d367bff67affbb03153c25a8209062049484e274022ea0eaa820bde70eb7c65427a2ea10a01e87540de0da025bd737f076fb6abefc269e09e104bea235e1c",
+    "signed_text": "bbb60e9cc7d322a3e7a563ee5e6e8a5ce38722aec24f0c59c5b1e24211f036ba:e45303e2245993672bf6733e2cfcf317bb0c806ced8b2688f9388f14c3f8e610",
+    "signature_valid": true,
+    "attempt": 1,
+    "protocol": "v2",
+    "pass": 0
+   }
+  },
+  {
+   "index": 3,
+   "leaf": "81e5b8deba447858ed6d9f0bf17358deaf8b4db08bb36e4a52b87cd4493db51c",
+   "request_sha256": "3908a5c693e82011683f8a51ff2a97ec9016d3af272f526ebc78203d724e1e57",
+   "response_sha256": "1a76f3b3378aacb756fda7ff68176dce7e7b0d543adf1975a98e60744f2efde0",
+   "chat_id": "chatcmpl-829418b6-4b58-42bd-a15a-71db3f31ffb8",
+   "signature": "0x279c00cf64481a88b6afc3816eb0cb2fa619fcd5f3d43b5958a6730767c2d7405412e8bb305862b324334217f3c7bc9b2057aaf31d9cc26a20b9420bc5157ab01c",
+   "signed_text": "deepseek-ai/DeepSeek-V4.1-Flash-1017:3908a5c693e82011683f8a51ff2a97ec9016d3af272f526ebc78203d724e1e57:1a76f3b3378aacb756fda7ff68176dce7e7b0d543adf1975a98e60744f2efde0",
+   "signing_address": "0xfe0071895500a9755c18044948ab4f4e1a7f337e",
+   "thinking": false,
+   "empty_retry": true,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 1368,
+    "completion_tokens": 6705,
+    "reasoning_tokens": 0
+   },
+   "signature_kind": "provider_tee",
+   "signature_valid": true,
+   "score": 0.8457,
+   "judge": {
+    "request_sha256": "d200bff773ce4255153a8b60a31abe424ee48f4c19c4964cd6e1a300eb979571",
+    "response_sha256": "0fa0f682c9d070b914975f780a33335edd4697d062b788e9e69447243f770ed6",
+    "signature": "0x498126150c4917247bb77c143c18d52dc2ce4d60dc29d697af8c9662f70d89a004dad3bed1847d551fc0e5a384677e8b238e69ef3a4e9834e0f34545816ae1811b",
+    "signed_text": "d200bff773ce4255153a8b60a31abe424ee48f4c19c4964cd6e1a300eb979571:0fa0f682c9d070b914975f780a33335edd4697d062b788e9e69447243f770ed6",
+    "signature_valid": true,
+    "attempt": 0,
+    "protocol": "v2",
+    "pass": 0
+   }
+  }
+ ],
+ "score_bps": 8300,
+ "resumed_answers": 2
+}

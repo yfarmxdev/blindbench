@@ -1,0 +1,1761 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BlindBench · Private AI evals that pay their authors</title>
+<meta name="description" content="Private AI evals that pay the people who write them. Secret test sets, answered inside NEAR AI Cloud enclaves, certified on NEAR testnet.">
+<meta name="theme-color" content="#060606">
+<meta property="og:type" content="website">
+<meta property="og:title" content="BlindBench · Private AI evals that pay their authors">
+<meta property="og:description" content="Secret test sets committed to NEAR as a hash, answered inside NEAR AI Cloud enclaves, certified onchain. Built for NEAR HACKATHON.">
+<meta property="og:url" content="https://blindben.ch/">
+<meta property="og:image" content="https://blindben.ch/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<link rel="canonical" href="https://blindben.ch/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blindben.ch/og.png">
+<script>document.documentElement.classList.add('js');</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23060606'/%3E%3Crect x='11' y='15' width='28' height='9' rx='4.5' fill='%23F2F2F2'/%3E%3Crect x='11' y='28' width='42' height='9' rx='4.5' fill='%23D71921'/%3E%3Crect x='11' y='41' width='18' height='9' rx='4.5' fill='%23F2F2F2'/%3E%3Crect x='33' y='41' width='9' height='9' rx='1.6' fill='%23F2F2F2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Doto:wght@100..900&family=IBM+Plex+Mono:wght@400;500;600&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Dot Matrix: black, white and one red. Doto for numbers and display, Inter Tight for UI, IBM Plex Mono for labels. */
+:root {
+  color-scheme: dark;
+  --bg: #060606; --s1: #0E0E0E; --s0: #0A0A0A; --s2: #121212;
+  --line: #1F1F1F; --line-2: #2E2E2E; --line-3: #474747;
+  --text: #F2F2F2; --soft: #B4B4B4; --muted: #8E8E8E; --dim: #808080; --off: #262626;
+  --red: #D71921; --red-t: #F0353B;
+  --dot: Doto, "IBM Plex Mono", ui-monospace, monospace; --sans: "Inter Tight", Inter, system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 88px; scrollbar-gutter: stable; }
+html:has(dialog[open]), html.menu-open { overflow: hidden; }
+body { position: relative; margin: 0; background: var(--bg); color: var(--text); font: 15px/1.55 var(--sans); overflow-x: clip; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.skip { position: fixed; left: 16px; top: 12px; z-index: 100; padding: 10px 16px; border-radius: 99px; background: var(--text); color: var(--bg); font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; text-decoration: none; transform: translateY(-160%); transition: transform .2s var(--ease); }
+.skip:focus { transform: none; }
+a { color: var(--text); text-decoration: underline; text-decoration-color: var(--line-3); text-underline-offset: 3px; transition: text-decoration-color .2s; }
+a:hover { text-decoration-color: var(--red); }
+code { font: 12px var(--mono); color: var(--text); background: var(--s2); padding: 1px 6px; border-radius: 6px; box-shadow: inset 0 0 0 1px var(--line); }
+::selection { background: var(--red); color: #fff; }
+:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+.wrap { --pad: 24px; max-width: 1180px; margin: 0 auto; padding: 0 var(--pad); }
+@media (max-width: 640px) { .wrap { --pad: 16px; } }
+svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+/* Doto draws "." as a cross: numbers use this square dot instead, the same one that ends the logo. */
+/* The real "." stays in the text (for copy and screen readers) but its glyph is clipped and hidden. */
+.pt { display: inline-block; width: .15em; height: .15em; border-radius: .025em; background: currentColor; margin: 0 .07em; overflow: hidden; line-height: 0; -webkit-text-fill-color: transparent; font-style: normal; }
+
+/* ---------- background: a dot field that fades out ---------- */
+.bg { position: absolute; left: 0; right: 0; top: 0; height: 1100px; z-index: -1; pointer-events: none; overflow: hidden;
+  background-image: radial-gradient(#202020 1.25px, transparent 1.6px); background-size: 14px 14px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 62% at 74% 26%, #000 10%, transparent 72%); mask-image: radial-gradient(ellipse 70% 62% at 74% 26%, #000 10%, transparent 72%); }
+
+/* ---------- header ---------- */
+header { position: sticky; top: 0; z-index: 30; background: rgba(6, 6, 6, .72); backdrop-filter: blur(16px) saturate(1.2); -webkit-backdrop-filter: blur(16px) saturate(1.2); border-bottom: 1px solid transparent; transition: border-color .3s, background-color .3s; }
+header.scrolled, header.open { border-bottom-color: var(--line); background-color: rgba(6, 6, 6, .86); }
+header .wrap { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; height: 68px; gap: 16px; }
+.brand { display: flex; align-items: center; gap: 12px; color: var(--text); text-decoration: none; min-width: 0; justify-self: start; }
+.brand svg { width: 26px; height: 26px; flex: none; transition: transform .5s var(--ease); }
+.brand:hover svg { transform: translateX(2px); }
+.wm { font: 900 21px/1 var(--dot); letter-spacing: .03em; white-space: nowrap; }
+.wm span { background: var(--text); color: var(--bg); padding: .04em .12em 0; margin-left: .06em; border-radius: .07em; }
+nav { display: flex; gap: 4px; justify-self: center; }
+nav a { position: relative; display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font: 400 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; padding: 8px 12px; text-decoration: none; transition: color .2s; }
+nav a::before { content: ""; width: 5px; height: 5px; border-radius: 1px; background: var(--red); transform: scale(0); transition: transform .3s var(--ease); margin-left: -13px; }
+nav a { white-space: nowrap; }
+@media (max-width: 1120px) { nav a { padding: 8px 8px; letter-spacing: .06em; } nav a[href="#use"] { display: none; } }
+nav a:hover { color: var(--text); }
+nav a.on { color: var(--text); }
+nav a.on::before { transform: none; }
+.hdr-r { display: flex; align-items: center; justify-content: flex-end; gap: 14px; min-width: 0; }
+.pill { display: inline-flex; align-items: center; gap: 9px; height: 36px; font: 500 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text); white-space: nowrap; min-width: 0; overflow: hidden; }
+.pill b { color: var(--muted); font-weight: 500; font-variant-numeric: tabular-nums; }
+.pill b.tick { animation: tick .6s var(--ease); }
+@keyframes tick { from { color: var(--text); } }
+.pill .sep { width: 3px; height: 3px; border-radius: 50%; background: var(--line-3); flex: none; }
+.pill.sim { padding: 0 14px; border-radius: 99px; box-shadow: inset 0 0 0 1px var(--line-3); }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--red); flex: none; animation: blink 1.6s steps(1) infinite; }
+@keyframes blink { 50% { opacity: .2; } }
+/* phone and tablet menu */
+.hdr-r .menu-btn { display: none; position: relative; }
+.menu-btn i { position: absolute; left: 12px; right: 12px; height: 1.5px; border-radius: 1px; background: currentColor; transition: transform .35s var(--ease), opacity .2s; }
+.menu-btn i:first-child { transform: translateY(-3.5px); } .menu-btn i:last-child { transform: translateY(3.5px); }
+header.open .menu-btn i:first-child { transform: rotate(45deg); } header.open .menu-btn i:last-child { transform: rotate(-45deg); }
+.mnav { position: fixed; z-index: 29; left: 0; right: 0; top: 68px; bottom: 0; overflow-y: auto; overscroll-behavior: contain; padding: 8px 16px 32px; background: rgba(6, 6, 6, .96); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); display: flex; flex-direction: column; opacity: 0; visibility: hidden; transform: translateY(-8px); transition: opacity .3s var(--ease), transform .4s var(--ease), visibility 0s .3s; }
+header.open + .mnav { opacity: 1; visibility: visible; transform: none; transition: opacity .3s var(--ease), transform .4s var(--ease); }
+.mnav a { display: flex; align-items: baseline; gap: 16px; padding: 22px 4px; border-bottom: 1px solid var(--line); color: var(--text); text-decoration: none; font: 600 30px/1 var(--sans); letter-spacing: -.03em; }
+.mnav a span { font: 900 18px/1 var(--dot); color: var(--red); letter-spacing: 0; }
+.mnav a svg.i { margin-left: auto; align-self: center; color: var(--dim); }
+.mnav .pill { margin-top: auto; padding-top: 24px; }
+.mnav-f { margin-top: auto; display: flex; flex-direction: column; gap: 14px; padding-top: 24px; }
+.mnav-f .btn { width: 100%; }
+@media (max-width: 900px) {
+  nav { display: none; } .hdr-r .menu-btn { display: grid; }
+  header .wrap { grid-template-columns: minmax(0, 1fr) auto; }
+}
+@media (min-width: 901px) { .mnav { display: none; } }
+@media (max-width: 1100px) { .hdr-r .pill .opt { display: none; } }
+@media (max-width: 560px) { .pill .opt { display: none; } .eyebrow span { display: none; } }
+@media (max-width: 480px) { .hdr-r .pill:not(.sim) { display: none; } .hdr-r #wallet { display: none; } .wm { font-size: 18px; } .brand svg { width: 22px; height: 22px; } .brand { gap: 10px; } }
+
+/* ---------- buttons ---------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: 48px; padding: 0 24px; border: 0; border-radius: 99px; cursor: pointer; white-space: nowrap; text-decoration: none;
+  font: 500 13px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--bg); background: var(--text); transition: background .2s, box-shadow .25s var(--ease), color .2s, transform .15s var(--ease); -webkit-tap-highlight-color: transparent; }
+.btn:hover { background: #fff; box-shadow: 0 0 0 4px rgba(242, 242, 242, .1); text-decoration: none; }
+.btn:active { transform: scale(.975); }
+.btn svg.i { width: 15px; height: 15px; transition: transform .25s var(--ease); }
+.btn:hover svg.i:last-child:not(:first-child) { transform: translateX(3px); }
+.btn.ghost { color: var(--text); background: transparent; box-shadow: inset 0 0 0 1px var(--line-3); }
+.btn.ghost:hover { background: rgba(242, 242, 242, .04); box-shadow: inset 0 0 0 1px var(--text); }
+.btn.sm { height: 38px; padding: 0 16px; font-size: 11.5px; }
+.btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+.vrow .btn, #paynear { height: auto; min-height: 48px; padding-block: 10px; border-radius: 24px; white-space: normal; text-align: center; line-height: 1.35; }
+/* busy: three dots that step like a display refreshing */
+.btn.busy { pointer-events: none; }
+.btn.busy::after { content: ""; width: 18px; height: 4px; flex: none; background: radial-gradient(circle, currentColor 1.6px, transparent 2px) 0 0 / 6px 4px repeat-x; -webkit-mask: linear-gradient(90deg, #000 0 0) 0 0 / 0 100% no-repeat; mask: linear-gradient(90deg, #000 0 0) 0 0 / 0 100% no-repeat; animation: busy 1s steps(4) infinite; }
+.btn.busy svg.i { display: none; }
+@keyframes busy { to { -webkit-mask-size: 133% 100%; mask-size: 133% 100%; } }
+.icon-btn { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; border: 0; color: var(--muted); background: transparent; box-shadow: inset 0 0 0 1px var(--line-2); cursor: pointer; flex: none; transition: color .2s, box-shadow .2s; }
+.icon-btn:hover { color: var(--text); box-shadow: inset 0 0 0 1px var(--text); }
+.cp { display: inline-grid; place-items: center; width: 24px; height: 24px; margin-left: 6px; border-radius: 50%; border: 0; color: var(--dim); background: transparent; cursor: pointer; vertical-align: middle; flex: none; }
+.cp:hover { color: var(--text); background: var(--s2); }
+.cp.done { color: var(--red-t); }
+.cp svg.i { width: 13px; height: 13px; }
+
+/* ---------- hero ---------- */
+.hero { position: relative; padding: 76px 0 40px; }
+.hero-g { display: grid; grid-template-columns: minmax(0, 1.04fr) minmax(0, .96fr); gap: 48px; align-items: center; }
+@media (max-width: 1180px) { .hero-g { grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 40px; } }
+@media (max-width: 980px) { .hero-g { grid-template-columns: minmax(0, 1fr); gap: 32px; } .hero { padding-top: 48px; } }
+.eyebrow { display: flex; align-items: center; gap: 12px; max-width: 100%; font: 400 11.5px var(--mono); letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
+.eyebrow b { display: inline-flex; align-items: center; gap: 10px; font-weight: 500; color: var(--text); white-space: nowrap; }
+.eyebrow b::before { content: ""; width: 7px; height: 7px; border-radius: 1px; background: var(--red); }
+.eyebrow span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.eyebrow span::before { content: "/"; color: var(--line-3); margin-right: 12px; }
+h1 { font: 900 clamp(40px, 5.5vw, 74px)/1 var(--dot); letter-spacing: .01em; text-transform: uppercase; margin: 28px 0 28px; }
+h1 em { font-style: normal; color: var(--red); }
+/* the headline powers on like a dot display: dots grow from pinpricks to full weight, word by word */
+.js h1 .w { animation: power .9s steps(7, end) both; animation-delay: calc(var(--w) * 90ms + 150ms); }
+@keyframes power { 0% { font-weight: 100; opacity: 0; } 12% { opacity: 1; } 100% { font-weight: 900; } }
+@keyframes up { from { opacity: 0; transform: translateY(14px); } }
+.js .hero .eyebrow, .js .hero .lede, .js .hero .cta { animation: up .9s var(--ease) both; }
+.js .hero .eyebrow { animation-delay: .05s; } .js .hero .lede { animation-delay: .55s; } .js .hero .cta { animation-delay: .7s; }
+.js .hero-v { animation: fade 1.2s var(--ease) .35s both; }
+@keyframes fade { from { opacity: 0; } }
+.lede { font-size: 18px; line-height: 1.6; color: var(--soft); max-width: 560px; margin: 0; }
+.lede b { color: var(--text); font-weight: 500; }
+.cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 34px; }
+.hero-v { position: relative; }
+.hero-v svg { width: 100%; height: auto; display: block; overflow: visible; }
+.hv-m { display: none !important; max-width: 420px; margin: 0 auto; }
+@media (max-width: 640px) { .hv-d { display: none !important; } .hv-m { display: block !important; } }
+.hv-cap { font: 500 10px var(--mono); letter-spacing: .16em; fill: var(--text); }
+.hv-sub { font: 400 9.5px var(--mono); letter-spacing: .04em; fill: var(--dim); }
+.hv-q { fill: var(--s1); stroke: var(--line-2); }
+.hv-red { fill: var(--text); animation: redact 3.6s ease-in-out infinite; }
+@keyframes redact { 0%, 100% { opacity: .4; } 50% { opacity: .92; } }
+.hv-wire { fill: none; stroke: #2A2A2A; stroke-width: 1.2; }
+.hv-lbl { font: 500 10px var(--mono); letter-spacing: .06em; fill: var(--text); }
+.hv-mono { font: 400 9.5px var(--mono); fill: var(--muted); }
+.hv-led { animation: blink 1.6s steps(1) infinite; }
+
+/* ---------- stats ---------- */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 60px 0 0; border-top: 1px solid var(--line); }
+.stat { display: flex; flex-direction: column; padding: 24px 20px 0 0; min-width: 0; }
+.stat + .stat { padding-left: 22px; border-left: 1px solid var(--line); }
+.stat b { order: -1; font: 900 58px/1 var(--dot); letter-spacing: .01em; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.stat b small { font: 500 12px var(--mono); letter-spacing: .1em; color: var(--muted); margin-left: 6px; }
+.stat span { font: 500 11px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--text); margin-top: 16px; }
+.stat em { font-style: normal; font-size: 13px; color: var(--dim); margin-top: 3px; }
+.stat.zero b { color: var(--red); }
+@media (max-width: 980px) {
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stat, .stat + .stat { padding: 20px 14px 20px 0; border-left: 0; border-bottom: 1px solid var(--line); }
+  .stat:nth-child(even) { padding-left: 16px; border-left: 1px solid var(--line); }
+  .stat:nth-last-child(-n+2) { border-bottom: 0; }
+  .stat b { font-size: 44px; }
+}
+
+/* ---------- feed ---------- */
+.feed[hidden] { display: none; }
+.feed { position: relative; display: flex; align-items: center; height: 50px; margin-top: 56px; border-block: 1px solid var(--line); background: var(--s0); overflow: hidden; }
+.feed-l { position: relative; z-index: 2; flex: none; display: flex; align-items: center; gap: 9px; height: 100%; padding: 0 20px; font: 500 11.5px var(--mono); letter-spacing: .16em; color: var(--text); background: var(--s0); border-right: 1px solid var(--line); }
+.feed-v { flex: 1; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 4%, #000 94%, transparent); }
+.feed-track { display: flex; width: max-content; animation: marquee 60s linear infinite; }
+.feed:hover .feed-track { animation-play-state: paused; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+.fi { display: inline-flex; align-items: center; gap: 11px; padding: 0 26px; font: 400 11.5px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); white-space: nowrap; border-right: 1px solid var(--line); }
+.fi b { color: var(--text); font-weight: 500; text-transform: none; letter-spacing: 0; }
+.fi strong { font: 900 17px/1 var(--dot); color: var(--text); letter-spacing: .02em; }
+.fi em { font-style: normal; color: var(--dim); text-transform: none; letter-spacing: 0; }
+.fi > i { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--text); }
+.fi > i.gateway { background: transparent; box-shadow: inset 0 0 0 1.5px var(--text); }
+.fi > i.none { background: var(--red); }
+.fi > i.cm { background: var(--red); border-radius: 1px; }
+
+/* ---------- sections ---------- */
+section.blk { padding: 120px 0 0; }
+.sh { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 360px); align-items: end; gap: 18px 56px; margin-bottom: 36px; }
+.sh-k { display: flex; align-items: center; gap: 10px; font: 500 12px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--red-t); }
+.sh-k::after { content: ""; flex: 0 1 56px; height: 1px; background: linear-gradient(90deg, rgba(215, 25, 33, .6), transparent); }
+.sh h2 { font: 600 clamp(30px, 3.6vw, 46px)/1.04 var(--sans); letter-spacing: -.035em; margin: 14px 0 0; text-wrap: balance; }
+.sh p { color: var(--muted); margin: 0; font-size: 15px; padding-bottom: 4px; text-wrap: pretty; }
+@media (max-width: 980px) { section.blk { padding-top: 96px; } .sh { grid-template-columns: minmax(0, 1fr); } .sh p { max-width: 520px; } }
+@media (max-width: 560px) { section.blk { padding-top: 80px; } .sh { margin-bottom: 26px; } }
+
+/* reveal on scroll: only when JS runs, so content never hides without it */
+.js .rv { opacity: 0; transform: translateY(22px); transition: opacity .8s var(--ease), transform .9s var(--ease); transition-delay: calc(var(--d, 0) * 80ms); }
+.js .rv.in { opacity: 1; transform: none; }
+.js :is(.fstep, .pf).rv { transition-property: opacity, transform, border-color, background-color; transition-duration: .8s, .9s, .35s, .35s; transition-delay: calc(var(--d, 0) * 80ms), calc(var(--d, 0) * 80ms), 0s, 0s; }
+
+/* ---------- protocol ---------- */
+.flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; counter-reset: step; }
+.fstep { position: relative; display: flex; flex-direction: column; min-height: 0; padding: 24px 22px 22px; border-radius: 26px; background: var(--s1); border: 1px solid var(--line); transition: border-color .35s, background-color .35s; }
+.fstep:hover { border-color: var(--line-2); background-color: #101010; }
+.fstep .n { font: 900 46px/1 var(--dot); color: var(--text); }
+.fstep .ic { position: absolute; top: 22px; right: 22px; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; color: var(--text); box-shadow: inset 0 0 0 1px var(--line-2); transition: box-shadow .35s, color .35s; }
+.fstep:hover .ic { box-shadow: inset 0 0 0 1px var(--text); }
+.fstep .ic svg.i { width: 19px; height: 19px; stroke-width: 1.6; }
+.fstep h3 { font: 600 20px var(--sans); letter-spacing: -.02em; margin: 36px 0 8px; }
+.fstep p { margin: 0 0 18px; flex: 1; color: var(--muted); font-size: 14px; text-wrap: pretty; }
+.fstep .tg { padding-top: 14px; border-top: 1px dashed var(--line-2); font: 400 11.5px var(--mono); color: var(--dim); }
+.fstep .tg b { color: var(--soft); font-weight: 400; }
+.fstep:not(:last-child)::after { content: ""; position: absolute; z-index: 2; right: -11px; top: 44px; width: 8px; height: 8px; border-radius: 1px; background: var(--red); animation: blink 1.6s steps(1) infinite; }
+.fstep:nth-child(2)::after { animation-delay: .4s; } .fstep:nth-child(3)::after { animation-delay: .8s; }
+@media (max-width: 980px) { .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); } .fstep::after { display: none; } .fstep { min-height: 0; } .fstep h3 { margin-top: 44px; } }
+@media (max-width: 560px) { .flow { grid-template-columns: minmax(0, 1fr); gap: 10px; } .fstep { border-radius: 22px; padding: 20px 18px 18px; } .fstep .n { font-size: 38px; } .fstep .ic { top: 18px; right: 18px; } .fstep h3 { margin-top: 28px; } }
+
+/* ---------- eval sets ---------- */
+.set { position: relative; margin-bottom: 20px; border-radius: 32px; background: var(--s1); border: 1px solid var(--line); overflow: hidden; }
+.vf { display: none; }
+.set-h { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; padding: 30px 32px 24px; }
+.set-id { display: flex; gap: 20px; align-items: flex-start; min-width: 0; }
+.glyph { flex: none; width: 64px; height: 64px; }
+.kicker { font: 500 11.5px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--red-t); }
+.set h3 { font: 600 26px/1.2 var(--sans); letter-spacing: -.03em; margin: 8px 0 14px; max-width: 660px; text-wrap: balance; }
+.set-d { margin: -4px 0 16px; max-width: 64ch; font-size: 14px; line-height: 1.55; color: var(--muted); text-wrap: pretty; }
+.tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.tag { display: inline-flex; align-items: center; gap: 7px; height: 26px; padding: 0 11px; border-radius: 99px; font: 500 10.5px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--soft); box-shadow: inset 0 0 0 1px var(--line-2); }
+.tag svg.i { width: 12px; height: 12px; }
+.tag.tee, .tag.seal { color: var(--text); }
+.tag.seal svg.i { color: var(--red-t); }
+.tag.pot { color: var(--text); box-shadow: inset 0 0 0 1px rgba(215, 25, 33, .55); }
+.tag.pot svg.i { color: var(--red-t); }
+.tag.pot.won { color: var(--soft); box-shadow: inset 0 0 0 1px var(--line-2); }
+.tag.warn { color: var(--red-t); box-shadow: inset 0 0 0 1px rgba(215, 25, 33, .55); }
+.set-buy { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 16px; }
+.price { text-align: right; }
+.price b { font: 900 48px/1 var(--dot); letter-spacing: .01em; }
+.price span { display: block; font: 500 10.5px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-top: 8px; }
+@media (max-width: 760px) {
+  .set-h { flex-direction: column; padding: 22px 18px 18px; } .set-buy { width: 100%; flex-direction: row; align-items: center; justify-content: space-between; } .price { text-align: left; }
+  .glyph { width: 48px; height: 48px; } .set h3 { font-size: 20px; } .price b { font-size: 38px; } .set { border-radius: 26px; }
+}
+.hud { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(0, 2.4fr); border-block: 1px solid var(--line); background: var(--s0); }
+.hud > div { padding: 13px 18px; border-left: 1px solid var(--line); min-width: 0; }
+.hud > div:first-child { border-left: 0; padding-left: 32px; }
+.hud span { display: block; font: 500 10px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+.hud b { display: block; font: 500 13.5px var(--mono); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hud .hash { display: flex; align-items: center; font-size: 12px; color: var(--soft); }
+.hud .hash code { all: unset; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+@media (max-width: 900px) { .hud { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hud > div { border-left: 0; border-top: 1px solid var(--line); padding-left: 18px !important; } .hud > div:nth-child(-n+2) { border-top: 0; } .hud > div:nth-child(even) { border-left: 1px solid var(--line); } .hud .wide { grid-column: 1 / -1; border-left: 0 !important; } }
+
+.lb-h, .lb-row { display: grid; grid-template-columns: 40px minmax(0, 1.2fr) minmax(0, 1.45fr) 112px 196px 16px; gap: 18px; align-items: center; padding: 14px 32px; }
+.lb-h { font: 500 10px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); padding-top: 16px; padding-bottom: 10px; }
+.lb-row { position: relative; border-top: 1px solid var(--line); cursor: pointer; transition: background .2s; }
+.lb-row:hover, .lb-row:focus-visible { background: var(--s2); outline: none; }
+.lb-row:hover::before, .lb-row:focus-visible::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--red); }
+.rk { font: 900 22px/1 var(--dot); color: var(--dim); }
+.rk.r1 { color: var(--red); } .rk.r2, .rk.r3 { color: var(--text); }
+.rk .eq { font-size: 15px; vertical-align: 3px; margin-right: 1px; }
+/* set-level notes from reference.json (floor tests, how the reference line was judged), and the tie key */
+.lb-note { margin: 0; padding: 16px 32px 2px; max-width: calc(88ch + 64px); font-size: 13.5px; line-height: 1.55; color: var(--muted); text-wrap: pretty; }
+.lb-note + .lb-note { padding-top: 8px; }
+.lb-note b { font-weight: 600; color: var(--soft); }
+.lb-note .tag { height: 22px; margin-right: 8px; vertical-align: 1px; }
+.pick { position: relative; display: flex; gap: 4px; width: max-content; max-width: 100%; margin-bottom: 18px; padding: 4px; border-radius: 99px; box-shadow: inset 0 0 0 1px var(--line-2); overflow-x: auto; scrollbar-width: none; }
+.pick::-webkit-scrollbar { display: none; }
+.pick button { flex: none; display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 18px; border: 0; border-radius: 99px; font: 500 11.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); background: transparent; cursor: pointer; white-space: nowrap; transition: color .2s, background .2s; }
+.pick button em { font-style: normal; color: var(--dim); }
+.pick button:hover { color: var(--text); }
+.pick button[aria-selected="true"] { color: var(--bg); background: var(--text); }
+.pick button[aria-selected="true"] em { color: #555; }
+/* Below the desktop width the five tabs do not fit on one line: they wrap, so no set is scrolled out of sight. */
+@media (max-width: 1020px) { .pick { border-radius: 24px; flex-wrap: wrap; overflow: visible; } }
+@media (max-width: 640px) { .pick button { height: 36px; padding: 0 13px; font-size: 10.5px; } }
+.set[hidden] { display: none; }
+.lb-about { border-top: 1px solid var(--line); }
+.lb-about summary { display: flex; align-items: center; gap: 10px; padding: 15px 32px; list-style: none; cursor: pointer; font: 500 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); transition: color .2s; }
+.lb-about summary::-webkit-details-marker { display: none; }
+.lb-about summary::before { content: "+"; width: 10px; font: 500 14px/1 var(--mono); color: var(--red-t); }
+.lb-about[open] summary::before { content: "\2013"; }
+.lb-about summary:hover { color: var(--text); }
+.lb-about .hud { margin-bottom: 16px; }
+.set-m { margin: 0; font: 500 11px/1.6 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.set-m + .tags:not(:empty) { margin-top: 14px; }
+@media (min-width: 761px) { .set-h { align-items: center; } }
+.set .lb-h { border-top: 1px solid var(--line); }
+.lb-about .lb-note { padding-top: 0; padding-bottom: 12px; }
+.lb-about .lb-note:last-child { padding-bottom: 20px; }
+.lb-note .badge { height: 20px; font-size: 10.5px; vertical-align: -1px; gap: 6px; margin-right: 8px; }
+.lb-note .badge.gw { margin-left: 8px; }
+@media (max-width: 760px) { .lb-about summary { padding: 14px 18px; } }
+.lb-foot { margin: 0; padding: 12px 32px 16px; border-top: 1px solid var(--line); font: 500 11px/1.5 var(--mono); color: var(--dim); }
+.lb-foot b { font: 900 14px/1 var(--dot); color: var(--soft); margin-right: 4px; }
+/* small print for one starred score on a board */
+.pc { position: relative; } .pc sup.star { position: absolute; right: -11px; top: -3px; font: 600 15px/1 var(--mono); color: var(--red-t); }
+.lb-star { margin: 0; padding: 12px max(32px, calc(100% - 96ch - 32px)) 14px 32px; border-top: 1px solid var(--line); font-size: 12px; line-height: 1.5; color: var(--muted); text-wrap: pretty; }
+.lb-star b { color: var(--red-t); font-weight: 600; }
+.who { min-width: 0; }
+.mname { font: 600 16px var(--sans); letter-spacing: -.015em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.org { font: 400 11.5px var(--mono); color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+.dots { display: flex; justify-content: space-between; align-items: center; height: 10px; }
+.dots i { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--off); transition: background-color .25s ease calc(var(--i) * 28ms + .25s); }
+:is(.ready, .in) .dots i.on { background: var(--text); }
+:is(.ready, .in) .lb-row.top .dots i.on { background: var(--red); }
+/* reference lines (closed models, not certified) draw as a dashed meter */
+.lb-row.ref .dots i { width: 7px; height: 2px; border-radius: 0; }
+:is(.ready, .in) .lb-row.ref .dots i.on { background: #6E6E6E; }
+.tiers { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); gap: 0 10px; margin-top: 11px; }
+.tiers span { display: flex; flex-direction: column; gap: 2px; min-width: 0; font: 500 11.5px/1.2 var(--mono); color: var(--soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tiers em { font: 500 9.5px/1.2 var(--mono); font-style: normal; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); overflow: hidden; text-overflow: ellipsis; }
+.tiers i { display: none; }
+.lb-row.ref .tiers span { color: var(--muted); }
+.pc { font: 900 30px/1 var(--dot); letter-spacing: .01em; text-align: right; white-space: nowrap; }
+.pc small { font: 500 12px var(--mono); color: var(--muted); margin-left: 2px; }
+.go { color: var(--dim); transition: transform .2s, color .2s; display: grid; place-items: center; }
+.lb-row:hover .go { color: var(--text); transform: translateX(3px); }
+.lb-row.ref { cursor: default; border-top-style: dashed; border-top-color: var(--line-2); }
+/* an earlier run of a model that was run again on the same set: still a certificate, no rank */
+.lb-row.old .meter, .lb-row.old .pc { opacity: .55; }
+.lb-row.old:is(:hover, :focus-visible) :is(.meter, .pc) { opacity: 1; }
+.lb-row.old .mname { color: var(--soft); font-weight: 500; }
+.lb-row.ref + .lb-row { border-top-style: dashed; border-top-color: var(--line-2); }
+.lb-row.ref:hover { background: transparent; } .lb-row.ref:hover::before { display: none; }
+.lb-row.ref .rk { color: var(--line-3); }
+.lb-row.ref .mname { color: var(--soft); font-weight: 500; }
+.lb-row.ref .pc { color: var(--muted); }
+.lb-row.ref .org { color: var(--dim); }
+.badge { display: inline-flex; align-items: center; gap: 8px; height: 26px; font: 500 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; color: var(--text); }
+.badge::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.badge svg.i { display: none; }
+.badge em { font-style: normal; color: var(--muted); }
+.badge.gw::before { background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; }
+.badge.no { color: var(--red-t); }
+.badge.ref { color: var(--dim); }
+.badge.ref::before { width: 8px; height: 2px; border-radius: 0; }
+.empty { padding: 28px 32px; color: var(--muted); font-size: 14.5px; display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--line); }
+.empty svg.i { color: var(--red-t); width: 20px; height: 20px; }
+.empty .btn { margin-left: auto; }
+[hidden] { display: none !important; }
+/* The six-column row needs about 780px of card; below that each certificate is a small card. */
+@media (max-width: 900px) {
+  .lb-h { display: none; }
+  .lb-row { grid-template-columns: 30px minmax(0, 1fr) auto; grid-template-areas: "rk who pc" "rk meter meter" "rk lvl lvl"; gap: 10px 12px; padding: 16px 32px; }
+  .rk { grid-area: rk; align-self: start; padding-top: 2px; } .who { grid-area: who; } .mname { white-space: normal; overflow-wrap: anywhere; line-height: 1.25; } .meter { grid-area: meter; } .pc { grid-area: pc; font-size: 26px; } .lvl { grid-area: lvl; } .go { display: none; }
+}
+@media (max-width: 760px) {
+  .lb-row { padding: 16px 18px; }
+  .dots i { width: 5px; height: 5px; }
+  .empty { padding: 20px 18px; }
+  .lb-note { padding: 14px 18px 2px; } .lb-foot { padding: 12px 18px 14px; } .lb-star { padding: 12px 18px 14px; }
+}
+.skel { display: grid; place-items: center; height: 320px; border-radius: 32px; background: var(--s1); border: 1px solid var(--line); background-image: radial-gradient(#1C1C1C 1.2px, transparent 1.5px); background-size: 14px 14px; }
+.skel span { display: inline-flex; align-items: center; gap: 10px; padding: 8px 14px; border-radius: 99px; background: var(--s1); font: 500 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); animation: skel 1.2s ease-in-out infinite alternate; }
+.skel span::before { content: ""; width: 7px; height: 7px; border-radius: 1px; background: var(--red); }
+@keyframes skel { from { opacity: .45; } to { opacity: 1; } }
+.err { color: var(--red-t); font: 13px var(--mono); }
+.src { font: 400 12px var(--mono); color: var(--dim); }
+.src a { color: var(--soft); white-space: nowrap; }
+
+/* ---------- proof ---------- */
+.proof { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.pf { display: flex; gap: 18px; padding: 26px; border-radius: 26px; background: var(--s1); border: 1px solid var(--line); transition: border-color .35s, background-color .35s; }
+.pf:hover { border-color: var(--line-2); background-color: #101010; }
+.pf .ic { flex: none; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; color: var(--text); box-shadow: inset 0 0 0 1px var(--line-2); transition: box-shadow .35s; }
+.pf:hover .ic { box-shadow: inset 0 0 0 1px var(--text); }
+.pf.warn:hover .ic { box-shadow: inset 0 0 0 1px var(--red); }
+.pf p { text-wrap: pretty; }
+.pf.warn .ic { color: var(--red-t); box-shadow: inset 0 0 0 1px rgba(215, 25, 33, .6); }
+.pf .ic svg.i { width: 19px; height: 19px; }
+.pf h3 { font: 600 18px var(--sans); letter-spacing: -.02em; margin: 2px 0 6px; }
+.pf p { margin: 0; color: var(--muted); font-size: 14.5px; }
+.pf .badge { height: 20px; font-size: 10.5px; vertical-align: -1px; gap: 6px; }
+/* 04 / Use it: three paths, each with its one command */
+.use { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.uc { display: flex; flex-direction: column; padding: 26px; border-radius: 26px; background: var(--s1); border: 1px solid var(--line); transition: border-color .35s, background-color .35s; }
+.uc:hover { border-color: var(--line-2); background-color: #101010; }
+.uc .who { font: 500 11px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--red-t); }
+.uc h3 { font: 600 20px var(--sans); letter-spacing: -.02em; margin: 10px 0 8px; }
+.uc p { margin: 0 0 18px; flex: 1; color: var(--muted); font-size: 14.5px; text-wrap: pretty; }
+.cmd { display: flex; align-items: flex-start; gap: 4px; min-width: 0; padding: 10px 8px 10px 14px; border-radius: 14px; background: var(--s2); box-shadow: inset 0 0 0 1px var(--line); }
+.cmd code { flex: 1; min-width: 0; padding: 0; background: none; box-shadow: none; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.55; color: var(--soft); }
+.cmd code::before { content: "$ "; color: var(--dim); }
+.use-f { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; margin-top: 18px; padding: 20px 26px; border-radius: 26px; border: 1px dashed var(--line-2); }
+.use-f p { flex: 1 1 420px; margin: 0; color: var(--muted); font-size: 14px; text-wrap: pretty; }
+.use-f .cmd { flex: 1 1 100%; }
+/* hackathon notice strip and status section */
+.hk { display: block; background: var(--s0); border-bottom: 1px solid var(--line); text-decoration: none; transition: background-color .3s; }
+.hk:hover { background: var(--s1); }
+.hk .wrap { display: flex; align-items: center; gap: 6px 14px; min-height: 42px; padding-block: 10px; font: 400 11.5px/1.5 var(--mono); letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
+.hk b { flex: none; display: inline-flex; align-items: center; gap: 10px; font-weight: 500; color: var(--text); white-space: nowrap; }
+.hk b::before { content: ""; width: 7px; height: 7px; border-radius: 1px; background: var(--red); }
+.hk .hk-t { min-width: 0; }
+.hk .hk-t::before { content: "/"; color: var(--line-3); margin-right: 14px; }
+.hk .hk-go { flex: none; margin-left: auto; display: inline-flex; align-items: center; gap: 8px; color: var(--text); white-space: nowrap; }
+.hk .hk-go svg.i { width: 13px; height: 13px; transition: transform .25s var(--ease); }
+.hk:hover .hk-go svg.i { transform: translateX(3px); }
+@media (max-width: 1100px) { .hk .opt { display: none; } }
+@media (max-width: 700px) { .hk .wrap { flex-wrap: wrap; } .hk .hk-t { flex-basis: 100%; order: 3; } .hk .hk-t::before { display: none; } }
+@media (max-width: 480px) { .hk .hk-gl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } }
+.st { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.sc { padding: 26px; border-radius: 26px; background: var(--s1); border: 1px solid var(--line); transition: border-color .35s, background-color .35s; }
+.sc:hover { border-color: var(--line-2); background-color: #101010; }
+.sc .who { display: inline-flex; align-items: center; gap: 9px; font: 500 11px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--text); }
+.sc .who::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.sc.off .who { color: var(--red-t); } .sc.off .who::before { background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; }
+.sc.nxt .who { color: var(--muted); } .sc.nxt .who::before { width: 9px; height: 2px; border-radius: 0; }
+.sc h3 { font: 600 20px var(--sans); letter-spacing: -.02em; margin: 10px 0 14px; }
+.sc ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 11px; }
+.sc li { position: relative; padding-left: 18px; color: var(--muted); font-size: 14.5px; text-wrap: pretty; }
+.sc li::before { content: ""; position: absolute; left: 0; top: .62em; width: 5px; height: 5px; border-radius: 1px; background: var(--line-3); }
+.sc li b { color: var(--text); font-weight: 500; }
+.st-f { margin: 18px 0 0; padding: 18px 26px; border-radius: 26px; border: 1px dashed var(--line-2); color: var(--muted); font-size: 14px; text-wrap: pretty; }
+.st-f b { color: var(--text); font-weight: 500; }
+.note { margin: 0 0 16px; padding: 12px 14px; border-radius: 14px; background: var(--s2); box-shadow: inset 0 0 0 1px var(--line-2); color: var(--soft); font-size: 13.5px; text-wrap: pretty; }
+.note b { color: var(--text); font-weight: 500; }
+@media (max-width: 980px) { .st { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) { .sc, .st-f { border-radius: 22px; padding: 20px 18px; } }
+@media (max-width: 980px) { .use { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) { .uc, .use-f { border-radius: 22px; padding: 20px 18px; } }
+@media (max-width: 760px) { .proof { grid-template-columns: minmax(0, 1fr); } .pf { padding: 20px 18px; } }
+
+footer { position: relative; margin-top: 140px; border-top: 1px solid var(--line); overflow: hidden; }
+.f-g { display: grid; grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr)); gap: 32px; padding-top: 48px; }
+.f-b p { margin: 18px 0 0; max-width: 300px; color: var(--muted); font-size: 14px; }
+.f-b .brand svg { width: 22px; height: 22px; } .f-b .wm { font-size: 18px; }
+.f-c h4 { margin: 4px 0 16px; font: 500 10.5px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+.f-c ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.f-c a, .f-c li > span { display: inline-flex; align-items: center; gap: 8px; color: var(--soft); font-size: 14px; text-decoration: none; transition: color .2s; }
+.f-c a:hover { color: var(--text); }
+.f-c a svg.i { width: 12px; height: 12px; color: var(--dim); transition: transform .25s var(--ease), color .2s; }
+.f-c a:hover svg.i { transform: translate(2px, -2px); color: var(--text); }
+.f-base { position: relative; display: flex; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; margin-top: 56px; padding-top: 22px; padding-bottom: 26px; font: 400 11.5px var(--mono); letter-spacing: .04em; color: var(--dim); }
+.f-base::before { content: ""; position: absolute; top: 0; left: var(--pad); right: var(--pad); height: 1px; background: var(--line); }
+.f-base .mono { color: var(--soft); }
+.f-base span { display: inline-flex; align-items: center; gap: 8px; }
+.f-co img { display: block; width: auto; height: 14px; }
+/* a huge dot-matrix wordmark, cut off by the page edge */
+.f-giant { display: block; margin: 8px auto -0.2em; text-align: center; font: 900 min(14.6vw, 176px)/1 var(--dot); letter-spacing: .02em; color: #121212; white-space: nowrap; user-select: none; pointer-events: none; }
+.f-giant i { display: inline-block; width: .15em; height: .15em; border-radius: .025em; background: var(--red); margin: 0 .05em; }
+@media (max-width: 900px) { .f-g { grid-template-columns: repeat(3, minmax(0, 1fr)); } .f-b { grid-column: 1 / -1; } }
+@media (max-width: 560px) { footer { margin-top: 110px; } .f-g { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 16px; padding-top: 36px; } .f-base { margin-top: 40px; flex-direction: column; } }
+
+/* ---------- dialog ---------- */
+dialog { width: min(820px, calc(100vw - 24px)); max-width: none; max-height: min(calc(100dvh - 32px), 920px); padding: 0; border: 1px solid var(--line-2); border-radius: 28px; color: var(--text); background: var(--s0); box-shadow: 0 40px 120px -20px rgba(0, 0, 0, .9), 0 0 0 1px rgba(0, 0, 0, .6); overflow: hidden; }
+dialog[open] { animation: pop .38s var(--ease); display: flex; flex-direction: column; }
+dialog.closing { animation: unpop .2s ease-in forwards; }
+dialog::backdrop { background-color: rgba(0, 0, 0, .74); background-image: radial-gradient(rgba(255, 255, 255, .07) 1px, transparent 1.4px); background-size: 12px 12px; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); animation: fade .3s ease both; }
+dialog.closing::backdrop { animation: fade .2s ease reverse both; }
+@keyframes pop { from { opacity: 0; transform: translateY(18px) scale(.975); } }
+@keyframes unpop { to { opacity: 0; transform: translateY(10px) scale(.985); } }
+.dlg-h { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 20px 24px; border-bottom: 1px solid var(--line); }
+.dlg-h > div:first-child { min-width: 0; }
+.dlg-h .kicker { font-size: 10.5px; }
+.dlg-h h2 { font: 600 20px var(--sans); letter-spacing: -.02em; margin: 4px 0 0; overflow-wrap: anywhere; }
+.dlg-h h2:focus { outline: none; }
+.dlg-a { display: flex; gap: 8px; flex: none; }
+.dlg-b { padding: 24px; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line-3) transparent; }
+.grab { display: none; }
+/* phones: a bottom sheet */
+@media (max-width: 560px) {
+  dialog { width: 100%; margin: auto 0 0; border-radius: 24px 24px 0 0; border-bottom: 0; max-height: calc(100dvh - 20px); }
+  dialog[open] { animation: sheet .45s var(--ease); }
+  dialog.closing { animation: unsheet .22s ease-in forwards; }
+  .grab { display: block; width: 36px; height: 4px; margin: 8px auto -4px; border-radius: 2px; background: var(--line-3); }
+  .dlg-h { padding: 14px 16px; } .dlg-b { padding: 16px 16px calc(24px + env(safe-area-inset-bottom)); }
+  .dlg-h h2 { font-size: 18px; }
+}
+@keyframes sheet { from { transform: translateY(100%); } }
+@keyframes unsheet { to { transform: translateY(100%); } }
+
+/* toast */
+.toast { position: fixed; z-index: 60; left: 50%; bottom: 24px; display: flex; align-items: center; gap: 10px; max-width: calc(100vw - 32px); padding: 12px 18px; border-radius: 99px; background: var(--text); color: var(--bg); font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; box-shadow: 0 18px 50px -12px rgba(0, 0, 0, .9); transform: translate(-50%, 140%); opacity: 0; transition: transform .45s var(--ease), opacity .3s; pointer-events: none; }
+.toast::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 1px; background: var(--red); }
+.toast.on { transform: translate(-50%, 0); opacity: 1; }
+.toast.bad { background: var(--red); color: #fff; } .toast.bad::before { background: #fff; }
+.toast span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.cert-top { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 26px; align-items: center; }
+@media (max-width: 560px) { .cert-top { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; gap: 18px; } .cert-top p { max-width: 340px; margin-inline: auto; } }
+.ring { position: relative; width: 160px; height: 160px; }
+.ring svg { width: 100%; height: 100%; display: block; }
+.ring circle { fill: #222; transition: fill .2s ease calc(var(--i) * 16ms + .15s); }
+.ready .ring circle.on { fill: var(--text); }
+.ready .ring circle.on.r { fill: var(--red); }
+.ring-t { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
+.ring-t b { font: 900 38px/1 var(--dot); letter-spacing: .01em; white-space: nowrap; }
+.ring-t b small { font: 500 13px var(--mono); color: var(--muted); margin-left: 2px; }
+.ring-t span { font: 500 10px var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--dim); margin-top: 8px; }
+.stamp { display: inline-flex; align-items: center; gap: 9px; height: 34px; padding: 0 15px; border-radius: 99px; font: 500 11.5px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+.stamp svg.i { display: none; }
+.stamp::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.stamp.ok { color: var(--bg); background: var(--text); } .stamp.ok::before { background: var(--red); }
+.stamp.gw { color: var(--text); box-shadow: inset 0 0 0 1px var(--text); } .stamp.gw::before { background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; }
+.stamp.no { color: #fff; background: var(--red); }
+.cert-top p { color: var(--muted); font-size: 14px; margin: 12px 0 0; }
+.cert-top p b { color: var(--text); font-weight: 500; }
+.ctiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 22px; }
+.ctier { padding: 14px 16px 16px; border-radius: 18px; background: var(--s1); border: 1px solid var(--line); }
+.ctier span { display: flex; justify-content: space-between; font: 500 10.5px var(--mono); color: var(--soft); text-transform: uppercase; letter-spacing: .12em; }
+.ctier span em { font-style: normal; color: var(--dim); }
+.ctier b { display: block; font: 900 28px/1 var(--dot); margin: 12px 0 12px; }
+.ctier .dots i { width: 5px; height: 5px; }
+.fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 20px 0 0; border-radius: 18px; overflow: hidden; background: var(--line); border: 1px solid var(--line); }
+.fields > div { padding: 12px 15px; background: var(--s0); min-width: 0; }
+.fields > div.w { grid-column: 1 / -1; }
+.fields dt { font: 500 10px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+.fields dd { margin: 4px 0 0; display: flex; align-items: center; font: 12.5px var(--mono); color: var(--text); min-width: 0; }
+.fields dd span { overflow-wrap: anywhere; min-width: 0; }
+@media (max-width: 560px) { .fields { grid-template-columns: minmax(0, 1fr); } }
+.vbox { margin-top: 20px; padding: 20px; border-radius: 22px; background: var(--s1); border: 1px solid var(--line-2); }
+.vbox h3 { display: flex; align-items: center; gap: 9px; font: 600 16px var(--sans); letter-spacing: -.01em; margin: 0 0 4px; }
+.vbox h3 svg.i { color: var(--red-t); }
+.vbox > p { color: var(--muted); font-size: 13.5px; margin: 0 0 16px; }
+.vrow { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.drop { position: relative; display: inline-flex; align-items: center; gap: 9px; height: 48px; padding: 0 20px; border-radius: 99px; font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--soft); border: 1px dashed var(--line-3); cursor: pointer; transition: color .2s, border-color .2s; }
+.drop:hover { color: var(--text); border-color: var(--text); }
+.drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.scan { position: relative; height: 6px; margin-top: 18px; overflow: hidden; background-image: radial-gradient(circle, #262626 2px, transparent 2.4px); background-size: 10px 6px; }
+.scan::after { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 60px; background-image: radial-gradient(circle, var(--red) 2px, transparent 2.4px); background-size: 10px 6px; animation: scan 1s steps(12) infinite; }
+@keyframes scan { from { transform: translateX(-60px); } to { transform: translateX(720px); } }
+.checks { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 8px; }
+.checks li { display: flex; gap: 12px; align-items: flex-start; padding: 11px 14px; border-radius: 14px; background: var(--s0); border: 1px solid var(--line); opacity: 0; transform: translateY(6px); animation: rise .4s cubic-bezier(.16, 1, .3, 1) forwards; animation-delay: calc(var(--i) * 150ms); }
+.checks li > i { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font: 700 12px var(--mono); font-style: normal; }
+.checks li > i svg.i { width: 13px; height: 13px; stroke-width: 2.6; }
+.checks li.ok > i { color: var(--bg); background: var(--text); }
+.checks li.bad > i { color: #fff; background: var(--red); }
+.checks li.warn > i { color: var(--red-t); box-shadow: inset 0 0 0 1.5px var(--red); }
+.checks li.info > i { color: var(--muted); box-shadow: inset 0 0 0 1px var(--line-3); }
+.checks b { display: block; font-weight: 500; font-size: 14px; }
+.checks span { display: block; font: 12px var(--mono); color: var(--muted); margin-top: 2px; overflow-wrap: anywhere; }
+@keyframes rise { to { opacity: 1; transform: none; } }
+.verdict { margin-top: 12px; padding: 16px 18px; border-radius: 16px; display: flex; align-items: center; gap: 11px; font: 500 13px var(--mono); letter-spacing: .12em; text-transform: uppercase; opacity: 0; animation: rise .5s cubic-bezier(.16, 1, .3, 1) forwards; animation-delay: calc(var(--i) * 150ms + 100ms); }
+.verdict svg.i { width: 18px; height: 18px; }
+.verdict .vt { display: inline-flex; align-items: center; gap: 11px; }
+.verdict.ok { color: var(--bg); background: var(--text); } .verdict.ok svg.i { color: var(--red); }
+.verdict.bad { color: #fff; background: var(--red); }
+.verdict em { font-style: normal; color: var(--red); letter-spacing: .08em; margin-left: auto; font-size: 11px; }
+@media (max-width: 560px) { .verdict { flex-wrap: wrap; letter-spacing: .08em; font-size: 12px; } .verdict .vt { align-items: flex-start; } .verdict em { flex-basis: 100%; margin: 2px 0 0 29px; } }
+
+.stepl { display: flex; align-items: center; gap: 12px; font: 600 16px var(--sans); letter-spacing: -.01em; margin: 0 0 14px; }
+.stepl span { font: 900 22px/1 var(--dot); color: var(--red); }
+.stepl + .models { margin-bottom: 26px; }
+.models { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 560px) { .models { grid-template-columns: minmax(0, 1fr); } }
+.mopt { position: relative; display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-radius: 16px; cursor: pointer; background: var(--s0); border: 1px solid var(--line); transition: border-color .2s, background .2s; min-width: 0; }
+.mopt:hover { border-color: var(--line-3); }
+.mopt input { position: absolute; opacity: 0; pointer-events: none; }
+.mopt .rd { flex: none; width: 16px; height: 16px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--line-3); transition: box-shadow .2s, background .2s; }
+.mopt:has(input:checked) { border-color: var(--text); background: var(--s2); }
+.mopt:has(input:checked) .rd { background: var(--red); box-shadow: inset 0 0 0 4px var(--text); }
+.mopt:has(input:focus-visible) { outline: 2px solid var(--text); outline-offset: 2px; }
+.mopt .mt { min-width: 0; flex: 1; }
+.mopt .mt b { display: block; font: 600 14.5px var(--sans); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mopt .mt small { display: block; font: 400 11px var(--mono); color: var(--dim); }
+.mopt .badge { height: 20px; font-size: 10px; letter-spacing: .08em; gap: 6px; }
+@media (max-width: 560px) { .mopt { flex-wrap: wrap; row-gap: 2px; } .mopt .mt { flex-basis: calc(100% - 28px); } .mopt .badge { margin-left: 28px; } }
+.tabs { display: inline-flex; gap: 4px; padding: 4px; border-radius: 99px; box-shadow: inset 0 0 0 1px var(--line-2); margin-bottom: 14px; max-width: 100%; }
+.tab { height: 36px; padding: 0 16px; border: 0; border-radius: 99px; font: 500 11.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); background: transparent; cursor: pointer; white-space: nowrap; transition: color .2s, background .2s; }
+.tab:hover { color: var(--text); }
+.tab.on { color: var(--bg); background: var(--text); }
+@media (max-width: 440px) { .tab { padding: 0 10px; font-size: 10px; letter-spacing: .03em; } }
+.panel { padding: 20px; border-radius: 22px; background: var(--s1); border: 1px solid var(--line); }
+.panel h3 { font: 600 16px var(--sans); letter-spacing: -.01em; margin: 0 0 6px; }
+.panel > p { color: var(--muted); font-size: 13.5px; margin: 0 0 16px; }
+.panel .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+select { appearance: none; -webkit-appearance: none; height: 48px; min-width: 200px; flex: 1; padding: 0 40px 0 18px; border-radius: 99px; border: 0; font: 500 14px var(--sans); color: var(--text); cursor: pointer;
+  background: var(--s0) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8a8a' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 16px center / 16px; box-shadow: inset 0 0 0 1px var(--line-3); }
+select option { background: var(--s1); }
+.status { margin-top: 14px; font: 12.5px/1.6 var(--mono); color: var(--muted); white-space: pre-wrap; overflow-wrap: anywhere; }
+.status:empty { display: none; }
+.status.okk { color: var(--text); }
+.receipt { margin-top: 14px; border-radius: 18px; overflow: hidden; border: 1px solid var(--line-2); background: var(--s0); }
+.receipt > div { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding: 11px 16px; border-top: 1px dashed var(--line-2); font-size: 13.5px; }
+.receipt > div:first-child { border-top: 0; }
+.receipt span { flex: none; font: 500 10.5px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.receipt b { font: 500 13px var(--mono); text-align: right; overflow-wrap: anywhere; min-width: 0; }
+.receipt .big b { font: 600 18px var(--mono); color: var(--text); }
+@media (max-width: 560px) { .receipt > div { padding: 11px 14px; } .receipt .big b { font-size: 15px; } .receipt b { font-size: 12px; } }
+.note { margin: 10px 0 0; font-size: 13px; color: var(--muted); }
+#cert-x.fresh { animation: xin .6s ease both; }
+@keyframes xin { from { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; animation-delay: 0s !important; transition-duration: .001ms !important; transition-delay: 0s !important; scroll-behavior: auto !important; }
+  .feed-track { animation: none !important; }
+  .js .rv { opacity: 1; transform: none; }
+}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- L5.1 Redline: three blacked-out lines, the red one longest, ending in a square full stop -->
+    <symbol id="logo" viewBox="0 0 64 64"><rect x="4" y="9" width="38" height="11" rx="5.5" fill="#F2F2F2"/><rect x="4" y="26.5" width="56" height="11" rx="5.5" fill="#D71921"/><rect x="4" y="44" width="24" height="11" rx="5.5" fill="#F2F2F2"/><rect x="33" y="44" width="11" height="11" rx="2" fill="#F2F2F2"/></symbol>
+  </defs>
+</svg>
+
+<a class="skip" href="#sets">Skip to the leaderboards</a>
+<a class="hk" href="#status"><div class="wrap"><b>NEAR HACKATHON submission</b><span class="hk-t">Working prototype on NEAR testnet<span class="opt"> · every certificate is real</span></span><span class="hk-go"><span class="hk-gl">What this version does</span> <svg class="i" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></a>
+<header id="hdr"><div class="wrap">
+  <a class="brand" href="#top" aria-label="BlindBench, back to top"><svg aria-hidden="true"><use href="#logo"/></svg><span class="wm">BLIND<span>BENCH</span></span></a>
+  <nav aria-label="Sections"><a href="#sets">Leaderboards</a><a href="#protocol">How it works</a><a href="#proof">Proof</a><a href="#use">Use it</a><a href="https://github.com/yfarmxdev/blindbench#readme" target="_blank" rel="noopener">Docs</a></nav>
+  <div class="hdr-r"><div class="pill" id="net" role="status"><span class="dot"></span><span>connecting…</span></div><button class="btn ghost sm" id="wallet" title="Needs a NEAR testnet account (a name ending in .testnet)">Connect wallet</button><button class="icon-btn menu-btn" id="menu" aria-label="Menu" aria-expanded="false" aria-controls="mnav"><i></i><i></i></button></div>
+</div></header>
+<div class="mnav" id="mnav">
+  <a href="#sets"><span>01</span>Leaderboards<svg class="i" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  <a href="#protocol"><span>02</span>How it works<svg class="i" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  <a href="#proof"><span>03</span>Proof<svg class="i" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  <a href="#use"><span>04</span>Use it<svg class="i" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  <a href="#status"><span>05</span>Status<svg class="i" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  <a href="https://github.com/yfarmxdev/blindbench#readme" target="_blank" rel="noopener"><span>06</span>Docs<svg class="i" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+  <div class="mnav-f"><div class="pill" id="net-m"></div><button class="btn ghost" id="wallet-m">Connect wallet</button></div>
+</div>
+
+<main id="top">
+  <section class="hero"><div class="wrap">
+    <div class="hero-g">
+      <div>
+        <div class="eyebrow"><b>Sealed evals</b><span>TEE scoring · onchain certificates</span></div>
+        <h1 aria-label="Private AI evals that pay their authors."><span class="w" style="--w:0">Private</span> <span class="w" style="--w:1">AI</span> <span class="w" style="--w:2">evals</span> <span class="w" style="--w:3">that</span> <em><span class="w" style="--w:4">pay</span> <span class="w" style="--w:5">their</span> <span class="w" style="--w:6">authors<i class="pt">.</i></span></em></h1>
+        <p class="lede">Public benchmarks leak into training data. Here, experts commit a <b>secret test set</b> to NEAR as a hash, models answer it inside <b>NEAR AI Cloud enclaves</b>, and the score lands onchain as a <b>certificate anyone can verify</b>.</p>
+        <div class="cta"><a class="btn" href="#sets">See the leaderboards <svg class="i" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="btn ghost" href="#proof">How a score is proven</a></div>
+      </div>
+      <div class="hero-v" aria-hidden="true">
+        <svg viewBox="0 0 360 600" class="hv-m" id="hvm"></svg>
+        <svg viewBox="0 0 560 490" class="hv-d" id="hv">
+          <text class="hv-cap" x="20" y="24">SEALED QUESTIONS</text><text class="hv-sub hv-root" x="20" y="40">merkle root · onchain</text>
+          <text class="hv-cap" x="280" y="24" text-anchor="middle">NEAR AI CLOUD</text><text class="hv-sub" x="280" y="40" text-anchor="middle">intel tdx · nvidia cc</text>
+          <text class="hv-cap" x="540" y="24" text-anchor="end">SIGNED ANSWERS</text><text class="hv-sub hv-key" x="540" y="40" text-anchor="end">attested ecdsa key</text>
+          <g id="hv-wires"></g>
+          <g id="hv-field"></g>
+          <circle cx="280" cy="196" r="70" fill="none" stroke="#D71921" stroke-opacity=".6"><animate attributeName="r" values="70;124" dur="3s" repeatCount="indefinite"/><animate attributeName="stroke-opacity" values=".6;0" dur="3s" repeatCount="indefinite"/></circle>
+          <g><circle cx="280" cy="196" r="94" fill="none" stroke="#F2F2F2" stroke-opacity=".55" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="0 9.84"/><animateTransform attributeName="transform" type="rotate" from="0 280 196" to="360 280 196" dur="40s" repeatCount="indefinite"/></g>
+          <g><circle cx="280" cy="196" r="105" fill="none" stroke="#3A3A3A" stroke-width="1.4" stroke-dasharray="44 16 6 16"/><animateTransform attributeName="transform" type="rotate" from="360 280 196" to="0 280 196" dur="24s" repeatCount="indefinite"/></g>
+          <g id="hv-pins" stroke="#3A3A3A" stroke-width="2" stroke-linecap="round"></g>
+          <rect x="220" y="136" width="120" height="120" rx="20" fill="#0E0E0E" stroke="#F2F2F2" stroke-width="1.4"/>
+          <rect x="236" y="152" width="88" height="88" rx="12" fill="none" stroke="#262626"/>
+          <path d="M236 176h12l6 6h14M324 206h-14l-6 6h-12M262 240v-10l6-6M298 152v10l-6 6" fill="none" stroke="#262626"/>
+          <rect x="316" y="160" width="6" height="6" rx="1" fill="#D71921" class="hv-led"/>
+          <text x="280" y="181" text-anchor="middle" class="hv-sub" style="letter-spacing:.2em">ENCLAVE</text>
+          <text x="280" y="215" text-anchor="middle" fill="#F2F2F2" style="font:900 34px Doto,monospace;letter-spacing:.04em">TEE</text>
+          <text x="280" y="232" text-anchor="middle" class="hv-sub">attested</text>
+          <g id="hv-cards"></g>
+          <path class="hv-wire" d="M280 268 V 362" stroke-dasharray="2 4"/>
+          <rect x="185" y="362" width="190" height="64" rx="16" fill="#0E0E0E" stroke="#2E2E2E"/>
+          <g id="hv-ring"></g>
+          <text x="246" y="389" fill="#F2F2F2" style="font:900 15px Doto,monospace;letter-spacing:.06em">CERTIFIED</text>
+          <text x="246" y="404" class="hv-mono">every answer signed</text>
+          <rect x="246" y="411" width="6" height="6" rx="1" fill="#D71921"/><text x="257" y="417" class="hv-mono" style="fill:#F2F2F2">author paid</text>
+          <path class="hv-wire" d="M280 426 V 446" stroke-dasharray="2 4"/>
+          <g id="hv-chain"></g>
+          <text x="280" y="484" text-anchor="middle" class="hv-sub" style="letter-spacing:.18em">NEAR · CERTIFICATE ONCHAIN</text>
+          <g id="hv-packets"></g>
+        </svg>
+      </div>
+    </div>
+    <div class="stats" id="stats">
+      <div class="stat"><span>Private sets</span><b data-k="sets">–</b><em>only a hash is onchain</em></div>
+      <div class="stat"><span>Certificates</span><b data-k="certs">–</b><em>scores posted onchain</em></div>
+      <div class="stat"><span>Items with signed answers</span><b data-k="signed">–</b><em>each one enclave-signed</em></div>
+      <div class="stat"><span>Paid to authors</span><b data-k="earned">–</b><em>in testnet NEAR, per run</em></div>
+    </div>
+  </div></section>
+
+  <div class="feed" id="feed" aria-label="Recent certificates" hidden><div class="feed-l" id="feed-l"><span class="dot"></span>LIVE</div><div class="feed-v"><div class="feed-track" id="feed-t"></div></div></div>
+
+
+  <section class="blk" id="sets"><div class="wrap">
+    <div class="sh rv"><div><div class="sh-k">01 / Leaderboards</div><h2>Sealed sets. Public leaderboards.</h2></div><p id="src" class="src">Loading…</p></div>
+    <div id="datasets" aria-live="polite"><div class="skel"><span>Reading the ledger…</span></div></div>
+    <noscript><p class="src">The leaderboards are read from NEAR in your browser, so this section needs JavaScript.</p></noscript>
+  </div></section>
+
+  <section class="blk" id="protocol"><div class="wrap">
+    <div class="sh rv"><div><div class="sh-k">02 / How it works</div><h2>Four steps. Zero questions revealed.</h2></div><p>Every step leaves something anyone can check.</p></div>
+    <div class="flow">
+      <div class="fstep rv" style="--d:0"><span class="n">01</span><div class="ic"><svg class="i" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3M12 14.5v2.5"/></svg></div><h3>Commit</h3><p>An expert writes a secret test set. Only its Merkle root and a price go onchain.</p></div>
+      <div class="fstep rv" style="--d:1"><span class="n">02</span><div class="ic"><svg class="i" viewBox="0 0 24 24"><circle cx="9" cy="9" r="5.5"/><path d="M15.6 9.6a5.5 5.5 0 1 1-6 6"/><path d="M9 6.8v4.4M7 9h4"/></svg></div><h3>Pay</h3><p>Anyone pays in NEAR to get a model scored. The payment waits in escrow.</p></div>
+      <div class="fstep rv" style="--d:2"><span class="n">03</span><div class="ic"><svg class="i" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M10 3.5V7M14 3.5V7M10 17v3.5M14 17v3.5M3.5 10H7M3.5 14H7M17 10h3.5M17 14h3.5"/></svg></div><h3>Score in a TEE</h3><p>The model answers inside a NEAR AI Cloud enclave, which signs every answer. A TEE judge or hidden tests grade it.</p></div>
+      <div class="fstep rv" style="--d:3"><span class="n">04</span><div class="ic"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="9" r="5.5"/><path d="m9.5 9 1.8 1.8L14.8 7.3"/><path d="M8.6 13.4 7.5 21l4.5-2.6 4.5 2.6-1.1-7.6"/></svg></div><h3>Certify</h3><p>The score and an evidence hash land on NEAR. Escrow pays the set's author.</p></div>
+    </div>
+  </div></section>
+
+  <section class="blk" id="proof"><div class="wrap">
+    <div class="sh rv"><div><div class="sh-k">03 / Proof</div><h2>What a certificate proves</h2></div><p>And what it doesn't prove yet.</p></div>
+    <div class="proof">
+      <div class="pf rv" style="--d:0"><div class="ic"><svg class="i" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></div><div><h3>The questions were fixed first</h3><p>The set's Merkle root was onchain before any run, and each certificate copies it.</p></div></div>
+      <div class="pf rv" style="--d:1"><div class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.4 7.5 9.5 4.3-1.1 7.5-4.9 7.5-9.5V6z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg></div><div><h3>The answers came from the named model</h3><p>Every answer is signed by a key held in an Intel TDX enclave. Verifying a certificate checks the hardware quote behind each key down to Intel's root certificate.</p></div></div>
+      <div class="pf rv" style="--d:0"><div class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12s-3.5 6.5-9.5 6.5S2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.5"/><path d="M4 20 20 4"/></svg></div><div><h3>No question is published</h3><p>Only TEE models are scored. The set's author and runner hold the questions. The evidence holds hashes and signatures, never questions or answers in the clear.</p></div></div>
+      <div class="pf warn rv" style="--d:1"><div class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5M12 17.2v.3"/></svg></div><div><h3>Still trusted today</h3><p>The set's owner holds the questions and runs the grader. Checklist and rubric sets are graded by a TEE judge model named on the certificate. Next: the grader in its own enclave.</p></div></div>
+    </div>
+  </div></section>
+  <section class="blk" id="use"><div class="wrap">
+    <div class="sh rv"><div><div class="sh-k">04 / Use it</div><h2>Three ways in. One command each.</h2></div><p>Live testnet contract. Setup is in the <a href="https://github.com/yfarmxdev/blindbench#readme" target="_blank" rel="noopener">docs</a>.</p></div>
+    <div class="use">
+      <div class="uc rv" style="--d:0"><span class="who">Eval authors</span><h3>Publish a private set</h3><p>Your questions stay with you. A hash and your price go onchain, and you are paid for every run.</p><div class="cmd"><code>node blindbench.mjs commit myset.jsonl --price 0.5</code><button class="cp" data-copy="node blindbench.mjs commit myset.jsonl --price 0.5" aria-label="Copy command" title="Copy"><svg class="i" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5.5 15H5a1.5 1.5 0 0 1-1.5-1.5V5A1.5 1.5 0 0 1 5 3.5h8.5A1.5 1.5 0 0 1 15 5v.5"/></svg></button></div></div>
+      <div class="uc rv" style="--d:1"><span class="who">Model builders and buyers</span><h3>Get a model scored</h3><p>Pay into escrow from a leaderboard or the command line. The public runner is off in this version: see <a href="#status">Status</a>.</p><div class="cmd"><code>node blindbench.mjs request 4 Qwen/Qwen3.8-27B --deposit 0.5</code><button class="cp" data-copy="node blindbench.mjs request 4 Qwen/Qwen3.8-27B --deposit 0.5" aria-label="Copy command" title="Copy"><svg class="i" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5.5 15H5a1.5 1.5 0 0 1-1.5-1.5V5A1.5 1.5 0 0 1 5 3.5h8.5A1.5 1.5 0 0 1 15 5v.5"/></svg></button></div></div>
+      <div class="uc rv" style="--d:2"><span class="who">Anyone</span><h3>Verify a certificate</h3><p>Click any leaderboard row, or recheck it from the command line. No account and no key.</p><div class="cmd"><code>node blindbench.mjs verify --cert 10</code><button class="cp" data-copy="node blindbench.mjs verify --cert 10" aria-label="Copy command" title="Copy"><svg class="i" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5.5 15H5a1.5 1.5 0 0 1-1.5-1.5V5A1.5 1.5 0 0 1 5 3.5h8.5A1.5 1.5 0 0 1 15 5v.5"/></svg></button></div></div>
+    </div>
+  </div></section>
+  <section class="blk" id="status"><div class="wrap">
+    <div class="sh rv"><div><div class="sh-k">05 / Status</div><h2>A working prototype, built for NEAR HACKATHON.</h2></div><p>Our hackathon entry, running on NEAR testnet.</p></div>
+    <div class="st">
+      <div class="sc rv" style="--d:0"><span class="who">Works today</span><h3>Real runs, real proofs</h3><ul>
+        <li><b>Every certificate here is real:</b> run inside NEAR AI Cloud enclaves and recorded on the NEAR testnet contract.</li>
+        <li><b>Anyone can verify them, free,</b> in the browser. No account and no key.</li>
+        <li><b>Five private sets</b> with public leaderboards, and one bounty already paid out by the contract.</li>
+        <li><b>The whole flow runs from the repo</b> in one command, offline, against a simulated enclave.</li>
+      </ul></div>
+      <div class="sc off rv" style="--d:1"><span class="who">Not switched on yet</span><h3>Runs on demand</h3><ul>
+        <li><b>New runs are not served in this version.</b> You can pay: the request is recorded onchain and waits in escrow, but the runner is off, so no certificate is posted. After 24 hours you can take the payment back.</li>
+        <li><b>Testnet only.</b> Test NEAR has no real value. There is no mainnet contract yet.</li>
+        <li><b>Paying from another chain</b> stops at a live NEAR Intents quote.</li>
+      </ul></div>
+      <div class="sc nxt rv" style="--d:2"><span class="who">Next</span><h3>The full marketplace</h3><ul>
+        <li><b>Runs on demand on mainnet,</b> in NEAR or USDC. The price covers inference, the author's share and a platform fee.</li>
+        <li><b>Grading in its own enclave,</b> so the score no longer depends on trusting the set's owner.</li>
+        <li><b>Sets encrypted to the enclave,</b> so one service can host many authors.</li>
+        <li><b>A listing on NEAR's Agent Market,</b> so agents can pay for a private score.</li>
+      </ul></div>
+    </div>
+    <p class="st-f rv"><b>See a full run now:</b> <code>npm run demo</code> in the repo. Known limits are in the <a href="https://github.com/yfarmxdev/blindbench#known-limits-of-the-prototype" target="_blank" rel="noopener">README</a>.</p>
+  </div></section>
+</main>
+
+<footer>
+  <div class="wrap f-g">
+    <div class="f-b"><a class="brand" href="#top" aria-label="BlindBench, back to top"><svg aria-hidden="true"><use href="#logo"/></svg><span class="wm">BLIND<span>BENCH</span></span></a><p>Private AI evals that pay the people who write them. Built for NEAR HACKATHON 2026.</p></div>
+    <div class="f-c"><h4>Explore</h4><ul><li><a href="#sets">Leaderboards</a></li><li><a href="#protocol">How it works</a></li><li><a href="#proof">What's proven</a></li><li><a href="#use">Use it</a></li><li><a href="#status">Status</a></li></ul></div>
+    <div class="f-c"><h4>Built on NEAR</h4><ul><li><a href="https://cloud.near.ai" target="_blank" rel="noopener">NEAR AI Cloud<svg class="i" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></a></li><li><a href="https://docs.near-intents.org" target="_blank" rel="noopener">NEAR Intents<svg class="i" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></a></li><li><a href="https://github.com/azbang/hot-connector" target="_blank" rel="noopener">NEAR Connect<svg class="i" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></a></li></ul></div>
+    <div class="f-c"><h4>Source</h4><ul><li><a href="https://github.com/yfarmxdev/blindbench" target="_blank" rel="noopener">GitHub<svg class="i" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></a></li><li><a href="https://github.com/yfarmxdev/blindbench#try-it-do-x-see-y" target="_blank" rel="noopener">Try it locally<svg class="i" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></a></li><li><span>MIT licensed</span></li></ul></div>
+  </div>
+  <div class="wrap f-base"><span>Contract <span class="mono" id="cid">…</span></span><span id="fnote">No backend · read from NEAR in your browser</span><span class="f-co"><img src="yfarmx.png" width="12" height="14" alt="" loading="lazy">© 2026 YFarmX Ltd</span></div>
+  <div class="f-giant" aria-hidden="true">BLINDBEN<i></i>CH</div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"><span></span></div>
+
+<dialog id="dlg" aria-labelledby="dlg-t"><div class="grab" aria-hidden="true"></div><div class="dlg-h"><div><div class="kicker" id="dlg-k"></div><h2 id="dlg-t" tabindex="-1"></h2></div><div class="dlg-a"><button class="icon-btn" id="dlg-l" aria-label="Copy a link to this certificate" title="Copy link" hidden><svg class="i" viewBox="0 0 24 24"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button><button class="icon-btn" id="dlg-x" aria-label="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div></div><div class="dlg-b" id="dlg-b"></div></dialog>
+
+<script>
+// Page chrome that works even if the data script below fails: reveal on scroll, header state, section highlight, phone menu.
+(() => {
+  const hdr = document.getElementById('hdr'), menu = document.getElementById('menu');
+  const IO = 'IntersectionObserver' in window;
+  const io = IO && new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -6% 0px' });
+  window.reveal = (root = document) => root.querySelectorAll('.rv:not(.in)').forEach((el) => io ? io.observe(el) : el.classList.add('in'));
+  window.reveal();
+  const onScroll = () => hdr.classList.toggle('scrolled', scrollY > 8);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  // highlight the nav link of the section crossing the middle of the screen
+  const links = [...document.querySelectorAll('nav a')], seen = new Set();
+  if (IO) {
+    const spy = new IntersectionObserver((es) => {
+      es.forEach((e) => e.isIntersecting ? seen.add(e.target.id) : seen.delete(e.target.id));
+      const cur = ['status', 'use', 'proof', 'sets', 'protocol'].find((id) => seen.has(id));
+      links.forEach((a) => a.classList.toggle('on', a.hash === '#' + cur));
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    ['sets', 'protocol', 'proof', 'use', 'status'].forEach((id) => spy.observe(document.getElementById(id)));
+  }
+  const setMenu = (open) => { if (open) document.getElementById('mnav').style.top = `${Math.max(0, Math.round(hdr.getBoundingClientRect().bottom))}px`; hdr.classList.toggle('open', open); document.documentElement.classList.toggle('menu-open', open); menu.setAttribute('aria-expanded', String(open)); };
+  menu.addEventListener('click', () => setMenu(!hdr.classList.contains('open')));
+  document.querySelectorAll('#mnav a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && hdr.classList.contains('open')) { setMenu(false); menu.focus(); } });
+  matchMedia('(min-width: 901px)').addEventListener('change', (m) => m.matches && setMenu(false));
+  window.setMenu = setMenu;
+})();
+</script>
+<script>
+// If the page's own script cannot start (a blocked or failed module download), say so instead of leaving the loading card up.
+setTimeout(() => { if (window.bbStarted) return; const el = document.querySelector('#datasets .skel span'); if (el) el.textContent = 'The page script did not load. Reload the page to try again.'; }, 15000);
+</script>
+<script type="module">
+import { proveKeys } from './tdx.mjs';
+// Signature recovery (ethers, about 520 KB) is fetched the first time a certificate is verified, not with the page.
+let verifyMessage = null;
+
+window.bbStarted = true;
+// Script policy for everything this script later puts on the page. The response header already
+// limits script to this site's own files; a static site cannot issue a fresh nonce per request, so
+// this second policy is added here, with a nonce made for this page load. From this line on an
+// inline script, an on-event attribute or a javascript: link runs only if it carries the nonce,
+// which is handed to the wallet connector alone (its wallet code runs in a sandboxed frame).
+// The one script address besides this site is the host's visit counter (see web/_headers).
+const NONCE = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(18))));
+{ const m = document.createElement('meta'); m.httpEquiv = 'Content-Security-Policy'; m.content = `script-src 'self' 'nonce-${NONCE}' 'wasm-unsafe-eval' https://static.cloudflareinsights.com; object-src 'none'; base-uri 'none'`; document.head.prepend(m); }
+const q = new URLSearchParams(location.search);
+// Query parameters are untrusted: a link to this page must not be able to make it
+// show someone else's data as ours. The hosted page reads the official contract on
+// testnet and nothing else. Another contract or network (labelled wherever its data
+// is shown, paying off), a demo snapshot, another RPC endpoint or other reference
+// lines are honoured only when the page is served from this machine
+// (node blindbench.mjs web).
+const LOCAL = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
+const OFFICIAL = 'blindbench-hnxot5.testnet';
+const isAccount = (s) => typeof s === 'string' && s.length >= 2 && s.length <= 64 && /^[a-z0-9]+([._-][a-z0-9]+)*$/.test(s);
+const SNAPSHOT = LOCAL ? q.get('snapshot') : null; // local demo: render a file written by `blindbench.mjs demo`
+const NETWORK = LOCAL && q.get('network') === 'mainnet' ? 'mainnet' : 'testnet';
+const CONTRACT = LOCAL && isAccount(q.get('contract')) ? q.get('contract') : OFFICIAL;
+// The one deployment this page speaks for. Any other contract, or the same name on another
+// network, is labelled wherever its data is shown, and paying is switched off for it.
+const IS_OFFICIAL = NETWORK === 'testnet' && CONTRACT === OFFICIAL;
+const REFS_URL = (LOCAL && q.get('refs')) || null;
+// RPC endpoints, tried in order: if one is down or rate-limiting, the next one answers. Served locally, ?rpc=<url> goes first.
+const RPCS = [LOCAL && /^https?:\/\//.test(q.get('rpc') ?? '') ? q.get('rpc') : null, ...(NETWORK === 'mainnet' ? ['https://rpc.mainnet.fastnear.com', 'https://rpc.mainnet.near.org'] : ['https://test.rpc.fastnear.com', 'https://rpc.testnet.near.org'])].filter(Boolean);
+const EXPLORER = NETWORK === 'mainnet' ? 'https://nearblocks.io' : 'https://testnet.nearblocks.io';
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+// Read JSON from a URL with a time limit and a size limit, so a slow or oversized answer cannot hang the page.
+async function getJson(url, { ms = 15000, max = 4e6, what = 'the file', init = {} } = {}) {
+  const r = await fetch(url, { ...init, signal: AbortSignal.timeout(ms) });
+  if (!r.ok) throw new Error(`${what} returned HTTP ${r.status}`);
+  const tooBig = () => new Error(`${what} is larger than ${max / 1e6} MB`);
+  if (Number(r.headers.get('content-length')) > max) throw tooBig();
+  if (!r.body?.getReader) { const t = await r.text(); if (t.length > max) throw tooBig(); return JSON.parse(t); }
+  const rd = r.body.getReader(), parts = []; let n = 0;
+  for (;;) { const { done, value } = await rd.read(); if (done) break; n += value.length; if (n > max) { rd.cancel().catch(() => {}); throw tooBig(); } parts.push(value); }
+  return JSON.parse(await new Blob(parts).text());
+}
+const near = (y) => { const s = BigInt(y).toString().padStart(25, '0'); return `${s.slice(0, -24)}.${s.slice(-24).replace(/0+$/, '') || '0'}`.replace(/\.0$/, ''); };
+const trimDec = (v, d = 6) => { const [w, f] = String(v).split('.'); const t = (f ?? '').slice(0, d).replace(/0+$/, ''); return t ? `${w}.${t}` : w; };
+const pct = (bps) => (bps / 100).toFixed(1) + '%';
+const short = (h, a = 6, b = 4) => { h = String(h ?? ''); return h.length > a + b + 1 ? `${h.slice(0, a)}…${h.slice(-b)}` : h; };
+const splitModel = (m) => { m = String(m ?? ''); const i = m.lastIndexOf('/'); return i < 0 ? ['', m] : [m.slice(0, i + 1), m.slice(i + 1)]; };
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// CSS cannot pause SVG <animate>; with reduced motion the drawing stays still.
+if (REDUCED) document.querySelectorAll('svg animate, svg animateTransform, svg animateMotion').forEach((a) => a.remove());
+// Doto draws "." as a cross, so numbers set in it use a square dot instead.
+const dn = (s) => esc(s).replace(/\./g, '<i class="pt">.</i>');
+const cap = (s) => String(s ?? '').replace(/^\s*\S/, (c) => c.toUpperCase());
+const IO = 'IntersectionObserver' in window;
+// Run fn once el scrolls into view (or straight away without IntersectionObserver).
+const whenSeen = (el, fn) => { if (!IO) return fn(); const o = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { o.disconnect(); fn(); } }, { rootMargin: '0px 0px -10% 0px' }); o.observe(el); };
+let toastT;
+function toast(msg, bad = false) {
+  const t = $('#toast'); t.querySelector('span').textContent = msg; t.classList.toggle('bad', bad);
+  t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), bad ? 4200 : 1800);
+}
+// A row of n dots, lit in proportion to a score in basis points.
+const dots = (bps, n = 24) => { const on = Math.round(bps / 10000 * n); return `<span class="dots">${Array.from({ length: n }, (_, i) => `<i${i < on ? ' class="on"' : ''} style="--i:${i}"></i>`).join('')}</span>`; };
+
+const I = (d) => `<svg class="i" viewBox="0 0 24 24">${d}</svg>`;
+const ICON = {
+  arrow: I('<path d="M5 12h14M13 6l6 6-6 6"/>'),
+  chev: I('<path d="m9 6 6 6-6 6"/>'),
+  copy: I('<rect x="8.5" y="8.5" width="11" height="11" rx="2.5"/><path d="M15.5 8.5v-2a2 2 0 0 0-2-2h-7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2"/>'),
+  check: I('<path d="m5 12.5 4.5 4.5L19 7.5"/>'),
+  x: I('<path d="M6 6l12 12M18 6 6 18"/>'),
+  shield: I('<path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.4 7.5 9.5 4.3-1.1 7.5-4.9 7.5-9.5V6z"/><path d="m9 12 2.2 2.2L15.5 10"/>'),
+  shieldx: I('<path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.4 7.5 9.5 4.3-1.1 7.5-4.9 7.5-9.5V6z"/><path d="m9.5 9.5 5 5M14.5 9.5l-5 5"/>'),
+  lock: I('<rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>'),
+  scan: I('<path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M4 12h16"/>'),
+  file: I('<path d="M14 3.5H7a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.5z"/><path d="M14 3.5v5h5M12 17v-6M9.5 13.5 12 11l2.5 2.5"/>'),
+  target: I('<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".8"/>'),
+  list: I('<path d="m4 7 1.5 1.5L8 6M4 13l1.5 1.5L8 12M4 19l1.5 1.5L8 18M11 7.5h9M11 13.5h9M11 19.5h9"/>'),
+  scale: I('<path d="M12 4v16M7 20h10M5 7h14M5 7l-2.5 6a3 3 0 0 0 5 0zM19 7l-2.5 6a3 3 0 0 0 5 0z"/>'),
+  box: I('<path d="M12 3 20 7.5v9L12 21 4 16.5v-9z"/><path d="M4 7.5 12 12l8-4.5M12 12v9"/>'),
+  code: I('<path d="m8.5 7.5-5 4.5 5 4.5M15.5 7.5l5 4.5-5 4.5M13.5 5l-3 14"/>'),
+  cup: I('<path d="M7.5 4.5h9v5a4.5 4.5 0 0 1-9 0zM7.5 6H4.5v1.5a3 3 0 0 0 3 3M16.5 6h3v1.5a3 3 0 0 1-3 3M12 14v3.5M8.5 19.5h7"/>'),
+};
+const GRADING_ICON = { exact: ICON.target, checklist: ICON.list, rubric: ICON.scale, tests: ICON.code };
+const GRADING_PLAIN = { exact: 'exact-match answers', checklist: 'graded by a TEE judge against an expert checklist', rubric: 'graded by a TEE judge against a rubric', tests: 'graded by hidden tests' };
+const GRADING_TAG = { exact: 'Exact answers', checklist: 'Checklist · TEE judge', rubric: 'Rubric · TEE judge', tests: 'Hidden tests' };
+const GRADING_HOW = { exact: 'graded against exact answers', checklist: 'graded against a weighted checklist', rubric: 'graded per rubric criterion', tests: 'graded by hidden unit tests in a sandbox' };
+const copyBtn = (v) => `<button class="cp" data-copy="${esc(v)}" aria-label="Copy" title="Copy">${ICON.copy}</button>`;
+
+// NEAR AI Cloud TEE models a run can ask for. "enclave": NEAR runs the model in
+// its own TDX + GPU enclave, which signs each answer. "gateway": a third-party
+// TEE (Chutes) verified by NEAR AI, whose attested gateway signs each answer.
+const MODELS = [
+  ['deepseek-ai/DeepSeek-V4.1-Flash-1017', 'enclave'], ['Qwen/Qwen3.8-27B', 'enclave'],
+  ['moonshotai/kimi-k3', 'gateway'], ['moonshotai/kimi-k2.6', 'gateway'],
+  ['deepseek/deepseek-v3.2', 'gateway'], ['qwen/qwen3.5-397b-a17b', 'gateway'],
+];
+// NEAR AI Cloud gateway signing key(s) seen in attestation reports.
+const GATEWAY_KEYS = ['0xb98a789cdc4817275f5155593ba73ef2a957e779'];
+// Model-enclave keys with a hardware proof under attestations/. Any other key is an unclassified signer.
+const ENCLAVE_KEYS = ['0xfe0071895500a9755c18044948ab4f4e1a7f337e', '0x835ab53d20294ef795906dff21ae4c045336aa26'];
+getJson('attestations/index.json', { ms: 8000, max: 1e6 }).then((j) => { for (const [k, v] of Object.entries(j ?? {})) if (/^0x[0-9a-f]{40}$/.test(k)) { const to = v?.role === 'gateway' ? GATEWAY_KEYS : v?.role === 'model' ? ENCLAVE_KEYS : null; if (to && !to.includes(k)) to.push(k); } }).catch(() => {});
+
+// ---------- data: live contract over RPC, or a local demo snapshot ----------
+let SNAP = null, tickT = 0;
+let rpcAt = 0; // the endpoint that last answered; later calls start there
+async function rpc(method, params) {
+  let last;
+  for (let n = 0; n < RPCS.length; n++) {
+    const at = (rpcAt + n) % RPCS.length;
+    try {
+      const r = await fetch(RPCS[at], { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 'bb', method, params }), signal: AbortSignal.timeout(12000) });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const j = await r.json();
+      // An endpoint can answer HTTP 200 with a JSON-RPC error (rate limit, a block it has not seen):
+      // ask the next one, and hand back the last such answer if they all say the same.
+      if (j?.error && n < RPCS.length - 1) { last = new Error(JSON.stringify(j.error).slice(0, 160)); continue; }
+      rpcAt = at;
+      return j;
+    } catch (e) { last = e; }
+  }
+  throw new Error(`no NEAR RPC endpoint answered (${last?.message ?? last})`);
+}
+// Fields the page does arithmetic on or prints as numbers. Whatever a custom contract, RPC
+// endpoint or snapshot sends, these reach the page as whole numbers, digit strings or booleans.
+// The field's type is settled before looking inside the value, so a list or an object in a
+// numeric field is refused like any other non-number. A record with a malformed id or counter
+// is refused outright (the page says it could not read the ledger): showing it with a made-up 0
+// would pass one record off as another.
+const NUMS = new Set(['id', 'run_id', 'dataset_id', 'items', 'score_bps', 'threshold_bps', 'signed_responses', 'runs_completed', 'certificate_id', 'winning_certificate', 'created_ns', 'issued_ns', 'expires_ns', 'mdd_bps']);
+const BPS = new Set(['score_bps', 'threshold_bps', 'mdd_bps']), NANOS = new Set(['created_ns', 'issued_ns', 'expires_ns']);
+const AMOUNTS = new Set(['price', 'earned', 'reward', 'paid']), FLAGS = new Set(['require_tee', 'reclaimed']);
+// Statistics a snapshot may carry on a certificate: plain numbers, or left out.
+const MEASURES = new Set(['samples', 'rerun_se_bps', 'item_se_bps', 'empty', 'judge_passes']);
+const LISTS = new Set(['breakdown']), RECORDS = new Set(['tee', 'stats']);
+function whole(v, key) {
+  const n = typeof v === 'number' ? v : typeof v === 'string' && /^\d{1,20}$/.test(v) ? Number(v) : NaN;
+  const max = BPS.has(key) ? 10000 : NANOS.has(key) ? 2 ** 64 : Number.MAX_SAFE_INTEGER;
+  if (!Number.isInteger(n) || n < 0 || n > max) throw new Error(`the ledger returned a malformed "${key}" (not a whole number in range)`);
+  return n;
+}
+function sane(v, key, depth = 0) {
+  if (v == null) return v;
+  if (depth > 12) throw new Error('the ledger returned data nested too deeply');
+  if (NUMS.has(key)) return whole(v, key);
+  if (AMOUNTS.has(key)) return typeof v === 'string' && /^\d{1,40}$/.test(v) ? v : typeof v === 'number' && Number.isSafeInteger(v) && v >= 0 ? String(v) : '0';
+  if (FLAGS.has(key)) return v === true;
+  if (MEASURES.has(key)) return typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : null;
+  if (LISTS.has(key) && !Array.isArray(v)) return null;
+  if (RECORDS.has(key) && (typeof v !== 'object' || Array.isArray(v))) return null;
+  if (Array.isArray(v)) return v.map((x) => sane(x, undefined, depth + 1)).filter((x) => !LISTS.has(key) || (x && typeof x === 'object' && !Array.isArray(x)));
+  if (typeof v === 'object') return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, sane(x, k, depth + 1)]));
+  return typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' ? v : null;
+}
+// A list of ledger records: every entry an object with a whole-number id and the fields the page counts on.
+function records(v, what, need = []) {
+  if (!Array.isArray(v) || v.some((r) => !r || typeof r !== 'object' || Array.isArray(r) || ['id', ...need].some((k) => !Number.isInteger(r[k])))) throw new Error(`the ledger returned a malformed list of ${what}`);
+  return v;
+}
+async function view(method, args = {}) {
+  const raw = await viewRaw(method, args);
+  return method === 'stats' ? [].concat(raw ?? []).map((x) => (Number.isFinite(Number(x)) ? Number(x) : 0)) : sane(raw);
+}
+async function viewRaw(method, args = {}) {
+  if (SNAP) {
+    if (method === 'stats') return SNAP.stats;
+    if (method === 'list_datasets') return SNAP.datasets;
+    if (method === 'leaderboard') return SNAP.leaderboards[args.dataset_id] ?? [];
+    if (method === 'list_bounties') return (SNAP.bounties ?? []).filter((b) => b.dataset_id === args.dataset_id);
+    throw new Error(`snapshot has no ${method}`);
+  }
+  const j = await rpc('query', { request_type: 'call_function', finality: 'final', account_id: CONTRACT, method_name: method, args_base64: btoa(JSON.stringify(args)) });
+  if (j.error || j.result?.error) throw new Error(JSON.stringify(j.error ?? j.result.error).slice(0, 200));
+  return JSON.parse(new TextDecoder().decode(new Uint8Array(j.result.result)) || 'null');
+}
+
+// Optional reference lines (e.g. a closed model scored by the same TEE judge):
+// shown dashed, never certified. reference.json maps a dataset root (or id) to
+// rows like { label, score_bps, note, breakdown }; rows shaped like certificates
+// ({ model, score_bps, dataset_root, reference: true }) in a plain array also work.
+// A demo snapshot may carry its own under "references"; ?refs=<url> overrides both.
+let REFS = {}, STARS = {};
+function addRefs(j) {
+  j = sane(j);
+  const put = (key, r) => { if (key == null || r?.score_bps == null) return; (REFS[key] ??= []).push({ label: r.label ?? r.model ?? 'Reference', score_bps: Number(r.score_bps), note: r.note, breakdown: r.breakdown, org: r.org, mdd_bps: r.mdd_bps != null ? Number(r.mdd_bps) : null }); };
+  // A row may instead carry a footnote for one model's score on a set: { model, dataset_root, footnote }.
+  const star = (key, r) => { if (key != null) (STARS[key] ??= []).push({ model: String(r.model ?? ''), text: String(r.footnote).slice(0, 400) }); };
+  if (Array.isArray(j)) j.forEach((r) => (r?.footnote ? star : put)(r.dataset_root ?? r.dataset_id, r));
+  else if (j && typeof j === 'object') for (const [k, rows] of Object.entries(j)) [].concat(rows).forEach((r) => put(k, r));
+}
+async function loadRefs() {
+  try { addRefs(await getJson(REFS_URL || 'reference.json', { ms: 6000, max: 2e6, init: { cache: 'no-store' } })); } catch {}
+}
+const refsFor = (ds) => [...(REFS[ds.root] ?? []), ...(REFS[String(ds.id)] ?? [])];
+// Smallest score gap a set can tell apart. reference.json can give it per set ("mdd_bps",
+// from the set's own statistics); otherwise partial-credit sets resolve 10 points, pass/fail sets 25.
+const TIE_BPS = { checklist: 1000, rubric: 1000, exact: 2500, tests: 2500 };
+const tieGap = (ds, refs) => ds.mdd_bps ?? refs.find((r) => r.mdd_bps != null)?.mdd_bps ?? TIE_BPS[ds.grading] ?? 1000;
+// A set note under the leaderboard. "Floor test: …" becomes a tag.
+function setNote(r) {
+  const n = String(r.note ?? '').trim(); if (!n) return '';
+  const floor = n.match(/^floor test:\s*/i);
+  return `<p class="lb-note">${floor ? `<span class="tag warn">Floor test</span>${esc(cap(n.slice(floor[0].length)))}` : `<b>${esc(r.label)}:</b> ${esc(n)}`}</p>`;
+}
+
+const level = (c) => { const k = String(c.tee?.signing_address).toLowerCase(); return !c.tee ? 'none' : GATEWAY_KEYS.includes(k) ? 'gateway' : SNAP || ENCLAVE_KEYS.includes(k) ? 'enclave' : 'unknown'; };
+const LEVEL_NAME = { gateway: 'gateway + TEE', enclave: 'model enclave', unknown: 'unclassified signer' };
+function badge(c) {
+  if (!c.tee) return `<span class="badge no">${ICON.shieldx} no TEE</span>`;
+  const lv = level(c), all = c.tee.signed_responses === c.items && lv !== 'unknown', gw = lv === 'gateway';
+  return `<span class="badge ${!all ? 'no' : gw ? 'gw' : 'ok'}">${ICON.shield}${LEVEL_NAME[lv]} <em>${c.tee.signed_responses}/${c.items}</em></span>`;
+}
+// Per-tier means (easy / medium / hard) when the set's items carry a tier.
+const tiers = (c) => c.breakdown?.length ? `<div class="tiers" style="--n:${c.breakdown.length}">${c.breakdown.map((t) => `<span><em>${esc(t.label)}</em>${pct(t.score_bps)}</span>`).join('')}</div>` : '';
+const modelName = (m) => { const [org, name] = splitModel(m); return `<div class="mname" title="${esc(m)}">${esc(name)}</div>${org ? `<div class="org">${esc(org.replace(/\/$/, ''))}</div>` : ''}`; };
+
+// A visual fingerprint of a commitment: a mirrored 6×6 dot matrix driven by the root's hex digits, one lit pair in red.
+function glyph(hex) {
+  const h = String(hex ?? '').replace(/[^0-9a-f]/gi, '').padEnd(64, '0'), lit = [];
+  for (let y = 0; y < 6; y++) for (let x = 0; x < 3; x++) { const v = parseInt(h[y * 3 + x], 16); if (v >= 6) lit.push([x, y, v]); }
+  const red = lit.length ? lit[parseInt(h.slice(40, 42), 16) % lit.length] : null, cells = [];
+  for (let y = 0; y < 6; y++) for (let x = 0; x < 6; x++) {
+    const hx = x < 3 ? x : 5 - x, c = lit.find(([a, b]) => a === hx && b === y);
+    const fill = !c ? '#232323' : c === red ? '#D71921' : '#F2F2F2', op = c && c !== red ? (.45 + c[2] / 15 * .55).toFixed(2) : 1;
+    cells.push(`<circle cx="${x * 10 + 5}" cy="${y * 10 + 5}" r="3.4" fill="${fill}" opacity="${op}"/>`);
+  }
+  return `<svg class="glyph" viewBox="0 0 60 60" aria-hidden="true">${cells.join('')}</svg>`;
+}
+// A set's onchain description, split for the card: an optional short label before ": ",
+// then the first sentence as the title and the rest as body text.
+function splitDesc(d) {
+  d = String(d ?? '').trim(); const i = d.indexOf(': ');
+  const [kick, text] = i > 0 && i <= 32 ? [d.slice(0, i), d.slice(i + 2)] : ['', d];
+  const m = text.match(/^(.{12,}?[.!?])\s+(\S.*)$/s);
+  return m ? [kick, m[1].replace(/\.$/, ''), m[2]] : [kick, text.replace(/\.$/, ''), ''];
+}
+
+const certs = new Map();
+const datasets = new Map();
+async function load() {
+  const net = $('#net');
+  try {
+  if (SNAPSHOT) {
+    const r = await fetch(SNAPSHOT, { cache: 'no-store' });
+    if (!r.ok) throw new Error(`${SNAPSHOT} returned HTTP ${r.status}. Run "node blindbench.mjs demo" first`);
+    SNAP = await r.json();
+    if (SNAP.references && !REFS_URL) addRefs(SNAP.references);
+    $('#cid').textContent = 'local demo ledger (simulated)';
+    $('#fnote').textContent = 'Simulated enclave · nothing here is onchain';
+    $('#wallet').hidden = true; $('#wallet-m').hidden = true;
+    net.classList.add('sim'); net.innerHTML = '<span class="dot"></span><span>Simulated</span><span class="sep opt"></span><span class="opt">demo ledger</span>';
+    $('#net-m').innerHTML = '<span class="dot"></span><span>Simulated</span><span class="sep"></span><span>demo ledger</span>';
+    $('#feed-l').classList.add('sim'); $('#feed-l').innerHTML = '<span class="dot"></span>DEMO';
+    $('#src').innerHTML = 'Rendered from the local demo snapshot. Scores and enclave are <b style="color:var(--red-t)">simulated</b>.';
+  } else {
+    $('#cid').innerHTML = `<a href="${EXPLORER}/address/${esc(CONTRACT)}" target="_blank" rel="noopener">${esc(CONTRACT)}</a>${IS_OFFICIAL ? '' : ' <b style="color:var(--red-t)">· not the official BlindBench deployment</b>'}`;
+    net.innerHTML = `<span class="dot"></span><span>Live · ${esc(NETWORK)}</span><span class="sep opt"></span><span class="opt">block <b class="blkh">…</b></span>`;
+    $('#net-m').innerHTML = `<span class="dot"></span><span>Live · ${esc(NETWORK)}</span><span class="sep"></span><span>block <b class="blkh">…</b></span>`;
+    $('#src').innerHTML = `Read live from <a href="${EXPLORER}/address/${esc(CONTRACT)}" target="_blank" rel="noopener">${esc(CONTRACT)}</a>${IS_OFFICIAL ? '' : ' <b style="color:var(--red-t)">· not the official BlindBench deployment</b>'} over NEAR RPC. No backend.`;
+    if (!tickT) { tick(); tickT = setInterval(tick, 5000); }
+  }
+    // Published evidence bundles (hashes and signatures only, never questions) live next to the
+    // page under evidence/<evidence_hash>.json; evidence/index.json lists the hashes available.
+    const [st, listed, published] = await Promise.all([view('stats'), view('list_datasets', { limit: 100 }).then((v) => records(v, 'sets', ['items', 'runs_completed'])),
+      getJson('evidence/index.json', { ms: 8000, max: 2e6, init: { cache: 'no-store' } }).catch(() => []), refsReady]);
+    // The format sample committed during development has public questions and no runs: it is
+    // not a private set, so the live page leaves it out (the demo snapshot still shows its samples).
+    // Anyone can commit a set to the contract. On the official deployment this page lists the sets
+    // the project's own account published (the contract's account), so a stranger's set cannot
+    // appear here as a tab; how many were left out is said in the status line. They stay onchain
+    // and readable with the CLI.
+    const ours = SNAP || !IS_OFFICIAL ? listed : listed.filter((ds) => ds.owner === OFFICIAL);
+    const unlisted = listed.length - ours.length;
+    const sets = SNAP ? ours : ours.filter((ds) => !(/^public sample$/i.test(splitDesc(ds.description)[0]) && !Number(ds.runs_completed)));
+    const boards = await Promise.all(sets.map((ds) => view('leaderboard', { dataset_id: ds.id }).then((v) => records(v, 'certificates', ['dataset_id', 'items', 'score_bps']))));
+    // Bounties are a nice-to-have on the card: a failed read never blocks the boards.
+    const pots = await Promise.all(sets.map((ds) => view('list_bounties', { dataset_id: ds.id }).then((v) => records(v, 'bounties', ['threshold_bps'])).catch(() => [])));
+    const all = [];
+    const hasEv = new Set(Array.isArray(published) ? published.filter((h) => typeof h === 'string' && /^[0-9a-f]{64}$/.test(h)) : []);
+    // Evidence is fetched only from this site's own evidence/ folder, by hash. (The local demo snapshot names its own files.)
+    sets.forEach((ds, k) => { datasets.set(ds.id, ds); boards[k].forEach((x) => { x.evidence_url = hasEv.has(x.evidence_hash) ? `evidence/${x.evidence_hash}.json` : SNAP && typeof x.evidence_url === 'string' && x.evidence_url.startsWith('/local/') ? x.evidence_url : null; certs.set(x.id, x); all.push(x); }); });
+    if (unlisted) $('#src').append(` ${unlisted} set${unlisted === 1 ? '' : 's'} published by other accounts ${unlisted === 1 ? 'is' : 'are'} onchain and not listed here.`);
+    stats({ sets: SNAP ? st[0] : sets.length, certs: SNAP || !IS_OFFICIAL ? st[2] : all.length, signed: all.reduce((s, c) => s + (c.tee?.signed_responses ?? 0), 0),
+      earned: near(sets.reduce((s, d) => s + BigInt(d.earned), 0n)), revealed: sets.filter((d) => d.reveal_uri).length });
+    feed(all, sets);
+    hero(sets, all);
+    if (!sets.length) { $('#datasets').innerHTML = `<div class="set"><div class="empty">${ICON.box} No eval sets committed yet.</div></div>`; return; }
+    // One set on screen at a time: sets with certificates first, picked from a row of tabs.
+    const order = sets.map((_, k) => k).sort((a, b) => (boards[b].length > 0) - (boards[a].length > 0) || a - b);
+    $('#datasets').innerHTML = `<div class="pick" role="tablist" aria-label="Private sets">${order.map((k) => `<button role="tab" id="pick-${sets[k].id}" data-set="${sets[k].id}" aria-controls="set-${sets[k].id}" aria-selected="false" tabindex="-1"><em>#${sets[k].id}</em>${esc(splitDesc(sets[k].description)[0] || 'Set')}</button>`).join('')}</div>` + order.map((k) => setCard(sets[k], boards[k], pots[k])).join('');
+    const picks = [...document.querySelectorAll('.pick button')];
+    picks.forEach((b, n) => {
+      b.onclick = () => { showSet(Number(b.dataset.set)); history.replaceState(null, '', `#set-${b.dataset.set}`); };
+      b.onkeydown = (e) => { const to = { ArrowRight: n + 1, ArrowLeft: n - 1, Home: 0, End: picks.length - 1 }[e.key]; if (to == null) return; e.preventDefault(); const t = picks[(to + picks.length) % picks.length]; t.focus(); t.click(); };
+    });
+    showSet(datasets.has(curSet) ? curSet : sets[order[0]].id);
+    window.reveal?.($('#datasets'));
+    if (!window.reveal) $('#datasets').classList.add('ready');
+    document.querySelectorAll('[data-cert]').forEach((el) => { el.onclick = () => openCert(Number(el.dataset.cert)); el.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.onclick(); } }; });
+    document.querySelectorAll('[data-run]').forEach((el) => { el.onclick = () => openRun(Number(el.dataset.run)); });
+    route();
+  } catch (e) {
+    $('#datasets').innerHTML = `<div class="set"><div class="empty err">${ICON.x}<span>Could not read ${SNAPSHOT ? 'the demo snapshot' : `${esc(CONTRACT)} over NEAR RPC`}: ${esc(e.message)}</span><button class="btn ghost sm" id="retry">Try again</button></div></div>`;
+    if (!SNAPSHOT) document.querySelectorAll('#net, #net-m').forEach((el) => { const t = el.querySelector('span:nth-child(2)'); if (t) t.textContent = `No connection · ${NETWORK}`; });
+    $('#retry').onclick = () => { $('#datasets').innerHTML = '<div class="skel"><span>Reading the ledger…</span></div>'; load(); };
+  }
+}
+let curSet = null;
+function showSet(id) {
+  if (!datasets.has(id)) return; curSet = id;
+  document.querySelectorAll('#datasets .set[id]').forEach((el) => { el.hidden = el.id !== `set-${id}`; });
+  document.querySelectorAll('.pick button').forEach((b) => { const on = Number(b.dataset.set) === id; b.setAttribute('aria-selected', on); b.tabIndex = on ? 0 : -1; if (on) { const p = b.parentElement; p.scrollLeft = Math.max(0, b.offsetLeft - (p.clientWidth - b.offsetWidth) / 2); } });
+}
+// Deep links: #cert-<id> opens a certificate, #run-<set id> opens the run dialog, #set-<id> shows a set.
+function route() {
+  const m = location.hash.match(/^#(cert|run|set)-(\d+)$/); if (!m) return;
+  const id = Number(m[2]);
+  if (m[1] === 'set') return showSet(id);
+  showSet(m[1] === 'cert' ? certs.get(id)?.dataset_id : id);
+  if (m[1] === 'cert' && certs.has(id)) openCert(id);
+  else if (m[1] === 'run' && datasets.has(id) && !datasets.get(id).reveal_uri) openRun(id);
+}
+addEventListener('hashchange', route);
+
+// A bounty on a set: open (reward waits for the first model over the bar), won
+// (paid by the contract with the certificate that crossed it), or lapsed.
+function bountyTag(b) {
+  const bar = `${b.threshold_bps / 100}%`, pot = `${near(b.reward)} NEAR`;
+  if (b.winning_certificate != null && b.winner) return `<span class="tag pot won" title="Paid by the contract to ${esc(b.winner)} when certificate #${b.winning_certificate} scored ${bar} or more">${ICON.cup}Bounty won · ${pot} · cert #${b.winning_certificate}</span>`;
+  if (b.reclaimed || (b.expires_ns && BigInt(b.expires_ns) / 1000000n < BigInt(Date.now()))) return '';
+  return `<span class="tag pot" title="Held by the contract. Paid to whoever pays for the first run that scores ${bar} or more.">${ICON.cup}Open bounty · ${pot} · first model ≥ ${bar}</span>`;
+}
+function setCard(ds, board, pots = []) {
+  const refs = refsFor(ds);
+  const stars = [...(STARS[ds.root] ?? []), ...(STARS[String(ds.id)] ?? [])];
+  const star = (m) => stars.some((s) => s.model === m) ? '<sup class="star" title="See the note under the board">*</sup>' : '';
+  // A model run again on the same set: its latest certificate counts for rank,
+  // whichever way the score moved. Earlier ones stay on the board, dimmed.
+  const newest = new Map();
+  board.forEach((x) => { const p = newest.get(x.model); if (!p || x.id > p.id) newest.set(x.model, x); });
+  const rows = board.map((x) => ({ kind: newest.get(x.model) === x ? 'cert' : 'old', score: x.score_bps, x }))
+    .concat(refs.map((r) => ({ kind: 'ref', score: r.score_bps, x: r })))
+    .sort((a, b) => b.score - a.score);
+  // Ranks with ties: a certificate less than the set's display band behind its
+  // group's leader shares the leader's rank ("=2"). A rough guide, not a significance test.
+  const gap = tieGap(ds, refs), size = {};
+  let pos = 0, lead = null, rk = 0;
+  for (const r of rows) {
+    if (r.kind !== 'cert') continue;
+    pos++;
+    if (lead == null || lead - r.score >= gap) { lead = r.score; rk = pos; }
+    r.rank = rk; size[rk] = (size[rk] ?? 0) + 1;
+  }
+  const ties = Object.values(size).some((n) => n > 1);
+  const notes = [...new Map(refs.filter((r) => r.note).map((r) => [r.note, r])).values()].map(setNote).join('');
+  const floor = refs.some((r) => /^floor test:/i.test(String(r.note ?? '').trim()));
+  const body = rows.length ? `<div class="lb-h" aria-hidden="true"><span>#</span><span>Model</span><span>Score</span><span></span><span>Proof</span><span></span></div>` + rows.map(({ kind, x, rank }) => kind === 'ref' ? `
+    <div class="lb-row ref" title="${esc(x.note ?? 'Reference only: answers not produced in a TEE, so not certified.')}">
+      <div class="rk">–</div><div class="who"><div class="mname">${esc(x.label)}</div><div class="org">${esc(x.org ?? 'closed model · reference')}</div></div>
+      <div class="meter">${dots(x.score_bps)}</div><div class="pc">${dn((x.score_bps / 100).toFixed(1))}<small>%</small></div>
+      <div class="lvl"><span class="badge ref">reference · not certified</span></div><div></div>
+    </div>` : kind === 'old' ? `
+    <div class="lb-row old" data-cert="${x.id}" role="button" tabindex="0" title="An earlier run of this model on this set. Its latest certificate (#${newest.get(x.model).id}) counts for rank." aria-label="Certificate ${x.id}: ${esc(x.model)}, ${pct(x.score_bps)}, earlier run, replaced by certificate ${newest.get(x.model).id}">
+      <div class="rk">–</div><div class="who">${modelName(x.model)}</div>
+      <div class="meter">${dots(x.score_bps)}</div><div class="pc">${dn((x.score_bps / 100).toFixed(1))}<small>%</small></div>
+      <div class="lvl"><span class="badge ref">earlier run · see #${newest.get(x.model).id}</span></div><div class="go">${ICON.chev}</div>
+    </div>` : `
+    <div class="lb-row${rank === 1 ? ' top' : ''}" data-cert="${x.id}" role="button" tabindex="0" aria-label="Certificate ${x.id}: ${esc(x.model)}, ${pct(x.score_bps)}, ${size[rank] > 1 ? 'tied at rank' : 'rank'} ${rank}">
+      <div class="rk ${rank <= 3 ? 'r' + rank : ''}"${size[rank] > 1 ? ` title="Tied: less than ${gap / 100} points behind the leader of its group"` : ''}>${size[rank] > 1 ? '<span class="eq">=</span>' : ''}${rank}</div><div class="who">${modelName(x.model)}</div>
+      <div class="meter">${dots(x.score_bps)}</div><div class="pc">${dn((x.score_bps / 100).toFixed(1))}<small>%</small>${star(x.model)}</div>
+      <div class="lvl">${badge(x)}</div><div class="go">${ICON.chev}</div>
+    </div>`).join('') + stars.map((s) => `<p class="lb-star"><b>*</b> ${esc(s.text)}</p>`).join('') + `<details class="lb-about"><summary>Details and how to read this board</summary><!--hud-->${notes}${ties ? `<p class="lb-note"><b>= Tied.</b> Ranks are grouped with a display band of ${gap / 100} points: a certificate less than ${gap / 100} points behind the leader of its group shares that rank. A rough comparison guide, not a significance test.</p>` : ''}<p class="lb-note"><span class="badge ok">model enclave</span>The model's own enclave signed each answer. <span class="badge gw">gateway + TEE</span>NEAR AI's attested gateway signed after verifying a third-party enclave.</p></details>` : `<div class="empty">${ICON.box} No certificates yet.</div>`;
+  const [kick, title, more] = splitDesc(ds.description);
+  const hud = `<div class="hud">
+      <div><span>Items</span><b>${ds.items}</b></div>
+      <div><span>Runs</span><b>${ds.runs_completed}</b></div>
+      <div><span>Earned</span><b>${near(ds.earned)} NEAR</b></div>
+      <div><span>Author</span><b title="${esc(ds.owner)}">${esc(ds.owner)}</b></div>
+      <div class="wide"><span>Commitment · Merkle root</span><b class="hash"><code>${esc(ds.root)}</code>${copyBtn(ds.root)}</b></div>
+    </div>`;
+  return `<article class="set" id="set-${ds.id}" role="tabpanel" aria-labelledby="set-${ds.id}-t" hidden><span class="vf" aria-hidden="true"></span>
+    <div class="set-h">
+      <div class="set-id">${glyph(ds.root)}<div style="min-width:0"><div class="kicker">Set #${ds.id}${kick ? ` · ${esc(kick)}` : ''}</div><h3 id="set-${ds.id}-t">${esc(cap(title))}</h3>${more ? `<p class="set-d">${esc(more)}</p>` : ''}
+        <p class="set-m">${ds.items} sealed question${ds.items === 1 ? '' : 's'} · ${esc(GRADING_PLAIN[ds.grading] ?? `${ds.grading} grading`)} · ${ds.runs_completed} run${ds.runs_completed === 1 ? '' : 's'}</p>
+        <div class="tags">${ds.reveal_uri ? '<span class="tag warn">revealed</span>' : ''}${floor ? '<span class="tag warn" title="The reference model scores 100% here, so this set shows that a model clears the bar. It does not rank models above it.">Floor test</span>' : ''}${pots.map(bountyTag).join('')}</div></div></div>
+      <div class="set-buy">${ds.reveal_uri ? '' : `<button class="btn ghost" data-run="${ds.id}">Run a model · ${near(ds.price)} NEAR ${ICON.arrow}</button>`}</div>
+    </div>
+    ${body.replace('<!--hud-->', hud)}</article>`;
+}
+
+// ---------- hero, stats, feed ----------
+function stats(v) {
+  const els = [...document.querySelectorAll('#stats [data-k]')];
+  const unit = (k) => k === 'earned' ? '<small>NEAR</small>' : '';
+  // count up once the row is on screen (it sits below the diagram on phones)
+  whenSeen($('#stats'), () => els.forEach((el, n) => {
+    const k = el.dataset.k, target = Number(v[k]), dec = String(v[k]).includes('.') ? Math.min(3, String(v[k]).split('.')[1].length) : 0;
+    el.setAttribute('aria-label', `${v[k]}${k === 'earned' ? ' NEAR' : ''}`);
+    if (REDUCED || !isFinite(target)) { el.innerHTML = `${dn(v[k])}${unit(k)}`; return; }
+    const t0 = performance.now() + n * 70, D = 1200;
+    const step = (t) => { const p = Math.max(0, Math.min(1, (t - t0) / D)), e = 1 - Math.pow(1 - p, 4); el.innerHTML = `${dn((target * e).toFixed(dec))}${unit(k)}`; if (p < 1) requestAnimationFrame(step); else el.innerHTML = `${dn(v[k])}${unit(k)}`; };
+    requestAnimationFrame(step);
+  }));
+}
+function feed(all, sets) {
+  let items = [...all].sort((a, b) => b.id - a.id).slice(0, 14).map((c) => `<span class="fi"><i class="${level(c)}"></i>CERT #${c.id}<b>${esc(splitModel(c.model)[1])}</b><strong>${dn(pct(c.score_bps))}</strong><em>set #${c.dataset_id} · ${c.tee?.signed_responses ?? 0}/${c.items} signed</em></span>`);
+  if (!items.length) items = sets.map((ds) => `<span class="fi"><i class="cm"></i>SET #${ds.id} committed<b>root ${esc(short(ds.root))}</b><em>${ds.items} sealed questions · ${near(ds.price)} NEAR per run</em></span>`);
+  if (!items.length) { $('#feed').style.display = 'none'; return; }
+  let row = items; while (row.length < 10) row = row.concat(items);
+  $('#feed-t').innerHTML = row.join('') + row.join('');
+}
+function hero(sets, all) {
+  if (sets[0]) document.querySelectorAll('.hv-root').forEach((t) => { t.textContent = `root ${short(sets[0].root, 8, 6)}`; });
+  const k = all.find((c) => c.tee)?.tee.signing_address; if (k) document.querySelectorAll('.hv-key').forEach((t) => { t.textContent = `key ${short(k, 8, 6)}`; });
+}
+// Static parts of the hero diagram, drawn once.
+(function drawHero() {
+  const NS = 'http://www.w3.org/2000/svg', svg = (tag, a) => { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); return e; };
+  const packet = (r, fill, dur, begin, path) => { const c = svg('circle', { r, fill, visibility: 'hidden' }); c.append(svg('set', { attributeName: 'visibility', to: 'visible', begin }), svg('animateMotion', { dur, begin, repeatCount: 'indefinite', path })); return c; };
+  const wires = $('#hv-wires'), cards = $('#hv-cards'), pins = $('#hv-pins'), pk = $('#hv-packets'), chain = $('#hv-chain'), field = $('#hv-field'), cring = $('#hv-ring');
+  // a dot-matrix halo around the enclave, fading outwards
+  for (let y = 196 - 156; y <= 196 + 156; y += 12) for (let x = 280 - 156; x <= 280 + 156; x += 12) {
+    const d = Math.hypot(x - 280, y - 196); if (d < 74 || d > 156) continue;
+    field.append(svg('circle', { cx: x, cy: y, r: 1.3, fill: '#F2F2F2', opacity: (0.2 * (1 - (d - 74) / 82)).toFixed(3) }));
+  }
+  // the certificate's score as a ring of dots
+  for (let i = 0; i < 24; i++) { const a = -Math.PI / 2 + i / 24 * 2 * Math.PI; cring.append(svg('circle', { cx: (217 + 16 * Math.cos(a)).toFixed(2), cy: (394 + 16 * Math.sin(a)).toFixed(2), r: 1.9, fill: i < 18 ? (i < 1 ? '#D71921' : '#F2F2F2') : '#2A2A2A' })); }
+  for (let i = 0; i < 6; i++) {
+    const p = 145 + i * 18;
+    pins.append(svg('line', { x1: 208, y1: p, x2: 220, y2: p }), svg('line', { x1: 340, y1: p, x2: 352, y2: p }), svg('line', { x1: 235 + i * 18, y1: 124, x2: 235 + i * 18, y2: 136 }), svg('line', { x1: 235 + i * 18, y1: 256, x2: 235 + i * 18, y2: 268 }));
+  }
+  const W1 = [70, 52, 84, 46, 64], W2 = [30, 44, 20, 50, 34];
+  for (let i = 0; i < 5; i++) {
+    const y = 56 + i * 58, cy = y + 21, py = 154 + i * 18;
+    const inP = `M170 ${cy} C 192 ${cy}, 188 ${py}, 208 ${py}`, outP = `M352 ${py} C 372 ${py}, 368 ${cy}, 390 ${cy}`;
+    wires.append(svg('path', { d: inP, class: 'hv-wire' }), svg('path', { d: outP, class: 'hv-wire' }));
+    const g = svg('g', {});
+    g.append(svg('rect', { x: 20, y, width: 150, height: 42, rx: 10, class: 'hv-q' }));
+    const t = svg('text', { x: 32, y: y + 17, class: 'hv-lbl' }); t.textContent = `Q·0${i + 1}`; g.append(t);
+    g.append(svg('rect', { x: 32, y: y + 25, width: W1[i], height: 6, rx: 3, class: 'hv-red', style: `animation-delay:${i * .5}s` }));
+    g.append(svg('rect', { x: 38 + W1[i], y: y + 25, width: W2[i], height: 6, rx: 3, class: 'hv-red', style: `animation-delay:${i * .5 + .3}s` }));
+    g.append(svg('path', { d: `M146 ${y + 18} v-3 a5 5 0 0 1 10 0 v3`, fill: 'none', stroke: '#6A6A6A', 'stroke-width': 1.5 }), svg('rect', { x: 143.5, y: y + 18, width: 15, height: 11, rx: 2.5, fill: 'none', stroke: '#6A6A6A', 'stroke-width': 1.5 }));
+    g.append(svg('rect', { x: 390, y, width: 150, height: 42, rx: 10, class: 'hv-q' }));
+    const a = svg('text', { x: 402, y: y + 17, class: 'hv-lbl' }); a.textContent = `A·0${i + 1}`; g.append(a);
+    const s = svg('text', { x: 402, y: y + 32, class: 'hv-mono' }); s.textContent = `sig 0x${['8f3a', 'c41e', '07bd', 'e2a9', '5d6c'][i]}…${['91c2', '3fa0', 'b7e4', '0d58', 'a1f3'][i]}`; g.append(s);
+    g.append(svg('circle', { cx: 522, cy, r: 8, fill: '#F2F2F2' }), svg('path', { d: `M518.5 ${cy} l2.5 2.5 l4.5 -5`, fill: 'none', stroke: '#060606', 'stroke-width': 1.8, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
+    cards.append(g);
+    if (!REDUCED) {
+      pk.append(packet(2.6, '#F2F2F2', '2.6s', `${i * .5}s`, inP), packet(2.6, '#D71921', '2.6s', `${i * .5 + 1.3}s`, outP));
+    }
+  }
+  for (let i = 0; i < 7; i++) {
+    const x = 151 + i * 38, on = i === 3;
+    if (i) chain.append(svg('line', { x1: x - 12, y1: 455, x2: x, y2: 455, stroke: '#2E2E2E', 'stroke-dasharray': '2 3' }));
+    chain.append(svg('rect', { x, y: 446, width: 26, height: 18, rx: 4, fill: on ? '#D71921' : '#0E0E0E', stroke: on ? '#D71921' : '#2E2E2E' }));
+  }
+  if (!REDUCED) {
+    pk.append(packet(3, '#F2F2F2', '2.2s', '1s', 'M280 268 V 362'), packet(3, '#D71921', '1.2s', '2.2s', 'M280 426 V 446'));
+  }
+
+  // The same diagram stacked vertically for phones, so its labels stay readable at full size.
+  const M = $('#hvm'), CX = 180, CY = 222, add = (p, tag, a, txt) => { const e = svg(tag, a); if (txt != null) e.textContent = txt; p.append(e); return e; };
+  const text = (p, x, y, cls, txt, a = {}) => add(p, 'text', { x, y, class: cls, ...a }, txt);
+  text(M, CX, 14, 'hv-cap', 'SEALED QUESTIONS', { 'text-anchor': 'middle' }); text(M, CX, 29, 'hv-sub hv-root', 'merkle root · onchain', { 'text-anchor': 'middle' });
+  const mw = add(M, 'g', {}), mf = add(M, 'g', {});
+  for (let y = CY - 132; y <= CY + 132; y += 12) for (let x = CX - 168; x <= CX + 168; x += 12) {
+    const d = Math.hypot(x - CX, y - CY); if (d < 74 || d > 138 || y < 100 || y > 346) continue;
+    add(mf, 'circle', { cx: x, cy: y, r: 1.2, fill: '#F2F2F2', opacity: (0.2 * (1 - (d - 74) / 64)).toFixed(3) });
+  }
+  const pulse = add(M, 'circle', { cx: CX, cy: CY, r: 70, fill: 'none', stroke: '#D71921', 'stroke-opacity': .6 });
+  pulse.append(svg('animate', { attributeName: 'r', values: '70;118', dur: '3s', repeatCount: 'indefinite' }), svg('animate', { attributeName: 'stroke-opacity', values: '.6;0', dur: '3s', repeatCount: 'indefinite' }));
+  [[94, '#F2F2F2', .55, 2.6, '0 9.84', '0;360', '40s'], [105, '#3A3A3A', 1, 1.4, '44 16 6 16', '360;0', '24s']].forEach(([r, stroke, op, sw, da, dir, dur]) => {
+    const g = add(M, 'g', {}); add(g, 'circle', { cx: CX, cy: CY, r, fill: 'none', stroke, 'stroke-opacity': op, 'stroke-width': sw, 'stroke-linecap': 'round', 'stroke-dasharray': da });
+    const [a, b] = dir.split(';'); g.append(svg('animateTransform', { attributeName: 'transform', type: 'rotate', from: `${a} ${CX} ${CY}`, to: `${b} ${CX} ${CY}`, dur, repeatCount: 'indefinite' }));
+  });
+  const mp = add(M, 'g', { stroke: '#3A3A3A', 'stroke-width': 2, 'stroke-linecap': 'round' });
+  for (let j = 0; j < 6; j++) { const s = CY - 51 + j * 18; add(mp, 'line', { x1: 108, y1: s, x2: 120, y2: s }); add(mp, 'line', { x1: 240, y1: s, x2: 252, y2: s }); }
+  for (let i = 0; i < 5; i++) { const px = 144 + i * 18; add(mp, 'line', { x1: px, y1: 150, x2: px, y2: 162 }); add(mp, 'line', { x1: px, y1: 282, x2: px, y2: 294 }); }
+  add(M, 'rect', { x: 120, y: 162, width: 120, height: 120, rx: 20, fill: '#0E0E0E', stroke: '#F2F2F2', 'stroke-width': 1.4 });
+  add(M, 'rect', { x: 136, y: 178, width: 88, height: 88, rx: 12, fill: 'none', stroke: '#262626' });
+  add(M, 'path', { d: 'M136 202h12l6 6h14M224 232h-14l-6 6h-12M162 266v-10l6-6M198 178v10l-6 6', fill: 'none', stroke: '#262626' });
+  add(M, 'rect', { x: 216, y: 186, width: 6, height: 6, rx: 1, fill: '#D71921', class: 'hv-led' });
+  text(M, CX, 207, 'hv-sub', 'ENCLAVE', { 'text-anchor': 'middle', style: 'letter-spacing:.2em' });
+  text(M, CX, 241, '', 'TEE', { 'text-anchor': 'middle', fill: '#F2F2F2', style: 'font:900 34px Doto,monospace;letter-spacing:.04em' });
+  text(M, CX, 258, 'hv-sub', 'attested', { 'text-anchor': 'middle' });
+  const mpk = svg('g', {}), SIGS = ['8f3a', 'c41e', '07bd', 'e2a9', '5d6c'], B1 = [44, 30, 40, 26, 38], B2 = [24, 38, 18, 34, 22];
+  for (let i = 0; i < 5; i++) {
+    const x = 11 + i * 69, cx = x + 31, px = 144 + i * 18;
+    const inP = `M${cx} 88 C ${cx} 120, ${px} 118, ${px} 150`, outP = `M${px} 294 C ${px} 326, ${cx} 324, ${cx} 356`;
+    add(mw, 'path', { d: inP, class: 'hv-wire' }); add(mw, 'path', { d: outP, class: 'hv-wire' });
+    add(M, 'rect', { x, y: 42, width: 62, height: 46, rx: 10, class: 'hv-q' });
+    text(M, x + 9, 59, 'hv-lbl', `Q·0${i + 1}`);
+    add(M, 'path', { d: `M${x + 47} ${54} v-2.5 a3.5 3.5 0 0 1 7 0 v2.5`, fill: 'none', stroke: '#6A6A6A', 'stroke-width': 1.3 });
+    add(M, 'rect', { x: x + 45.5, y: 54, width: 10, height: 8, rx: 2, fill: 'none', stroke: '#6A6A6A', 'stroke-width': 1.3 });
+    add(M, 'rect', { x: x + 9, y: 68, width: B1[i], height: 5, rx: 2.5, class: 'hv-red', style: `animation-delay:${i * .5}s` });
+    add(M, 'rect', { x: x + 9, y: 76, width: B2[i], height: 5, rx: 2.5, class: 'hv-red', style: `animation-delay:${i * .5 + .3}s` });
+    add(M, 'rect', { x, y: 356, width: 62, height: 46, rx: 10, class: 'hv-q' });
+    text(M, x + 9, 373, 'hv-lbl', `A·0${i + 1}`);
+    add(M, 'circle', { cx: x + 50, cy: 369, r: 6.5, fill: '#F2F2F2' });
+    add(M, 'path', { d: `M${x + 47.2} 369 l2 2 l3.6 -4`, fill: 'none', stroke: '#060606', 'stroke-width': 1.6, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
+    text(M, x + 9, 391, 'hv-mono', `0x${SIGS[i]}…`);
+    if (!REDUCED) mpk.append(packet(2.6, '#F2F2F2', '2.6s', `${i * .5}s`, inP), packet(2.6, '#D71921', '2.6s', `${i * .5 + 1.3}s`, outP));
+  }
+  text(M, CX, 422, 'hv-cap', 'SIGNED ANSWERS', { 'text-anchor': 'middle' }); text(M, CX, 437, 'hv-sub hv-key', 'attested ecdsa key', { 'text-anchor': 'middle' });
+  add(M, 'path', { class: 'hv-wire', d: `M${CX} 446 V 470`, 'stroke-dasharray': '2 4' });
+  add(M, 'rect', { x: 85, y: 470, width: 190, height: 64, rx: 16, fill: '#0E0E0E', stroke: '#2E2E2E' });
+  for (let i = 0; i < 24; i++) { const a = -Math.PI / 2 + i / 24 * 2 * Math.PI; add(M, 'circle', { cx: (117 + 16 * Math.cos(a)).toFixed(2), cy: (502 + 16 * Math.sin(a)).toFixed(2), r: 1.9, fill: i < 18 ? (i < 1 ? '#D71921' : '#F2F2F2') : '#2A2A2A' }); }
+  text(M, 146, 497, '', 'CERTIFIED', { fill: '#F2F2F2', style: 'font:900 15px Doto,monospace;letter-spacing:.06em' });
+  text(M, 146, 512, 'hv-mono', 'every answer signed');
+  add(M, 'rect', { x: 146, y: 519, width: 6, height: 6, rx: 1, fill: '#D71921' }); text(M, 157, 525, 'hv-mono', 'author paid', { style: 'fill:#F2F2F2' });
+  add(M, 'path', { class: 'hv-wire', d: `M${CX} 534 V 554`, 'stroke-dasharray': '2 4' });
+  for (let i = 0; i < 7; i++) {
+    const x = 51 + i * 38, on = i === 3;
+    if (i) add(M, 'line', { x1: x - 12, y1: 563, x2: x, y2: 563, stroke: '#2E2E2E', 'stroke-dasharray': '2 3' });
+    add(M, 'rect', { x, y: 554, width: 26, height: 18, rx: 4, fill: on ? '#D71921' : '#0E0E0E', stroke: on ? '#D71921' : '#2E2E2E' });
+  }
+  text(M, CX, 594, 'hv-sub', 'NEAR · CERTIFICATE ONCHAIN', { 'text-anchor': 'middle', style: 'letter-spacing:.18em' });
+  if (!REDUCED) mpk.append(packet(3, '#F2F2F2', '2.2s', '1s', `M${CX} 446 V 470`), packet(3, '#D71921', '1.2s', '2.2s', `M${CX} 534 V 554`));
+  M.append(mpk);
+})();
+let ticking = false; // one block poll at a time, however slow the endpoint
+async function tick() {
+  if (document.hidden || ticking) return;
+  ticking = true;
+  try {
+    const j = await rpc('block', { finality: 'final' }); if (!j.result) return;
+    const h = Number(j.result.header.height).toLocaleString('en-US');
+    document.querySelectorAll('.blkh').forEach((b) => { if (b.textContent !== h) { b.textContent = h; b.classList.remove('tick'); void b.offsetWidth; b.classList.add('tick'); } });
+  } catch {} finally { ticking = false; }
+}
+
+// ---------- dialog helpers ----------
+const dlg = $('#dlg');
+let opener = null;
+// hash: the deep link this dialog answers to (#cert-3), so a certificate can be shared
+function openDialog(kicker, title, html, hash) {
+  $('#dlg-b').classList.remove('ready');
+  $('#dlg-k').textContent = kicker; $('#dlg-t').textContent = title; $('#dlg-b').innerHTML = html;
+  $('#dlg-l').hidden = !hash?.startsWith('#cert-');
+  if (hash && location.hash !== hash) history.replaceState(null, '', hash);
+  document.title = `${hash?.startsWith('#cert-') ? `Certificate ${hash.slice(6)}` : title} · BlindBench`;
+  if (!dlg.open) { opener = document.activeElement; dlg.classList.remove('closing'); dlg.showModal(); $('#dlg-t').focus({ preventScroll: true }); }
+  $('#dlg-b').scrollTop = 0;
+}
+function closeDialog() {
+  if (!dlg.open || dlg.classList.contains('closing')) return;
+  if (/^#(cert|run)-\d+$/.test(location.hash)) history.replaceState(null, '', location.pathname + location.search);
+  if (REDUCED) { dlg.close(); return; }
+  dlg.classList.add('closing');
+  setTimeout(() => { dlg.classList.remove('closing'); dlg.close(); }, 210);
+}
+const TITLE = document.title;
+dlg.addEventListener('close', () => { document.title = TITLE; opener?.focus?.({ preventScroll: true }); opener = null; });
+dlg.addEventListener('cancel', (e) => { e.preventDefault(); closeDialog(); });
+$('#dlg-x').onclick = closeDialog;
+$('#dlg-l').onclick = async () => { try { await navigator.clipboard.writeText(location.href); toast('Link to this certificate copied'); } catch { toast('Could not copy the link', true); } };
+dlg.addEventListener('click', (e) => { if (e.target === dlg) closeDialog(); });
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-copy]'); if (!b) return;
+  e.stopPropagation();
+  try { await navigator.clipboard.writeText(b.dataset.copy); b.classList.add('done'); b.innerHTML = ICON.check; toast('Copied to clipboard'); setTimeout(() => { b.classList.remove('done'); b.innerHTML = ICON.copy; }, 1400); }
+  catch { toast('Clipboard not available here', true); }
+});
+
+// ---------- certificate + in-browser verification ----------
+function ring(p) {
+  const N = 48, on = Math.round(p / 100 * N), d = [];
+  for (let i = 0; i < N; i++) { const a = -Math.PI / 2 + i / N * 2 * Math.PI; d.push(`<circle cx="${(80 + 70 * Math.cos(a)).toFixed(2)}" cy="${(80 + 70 * Math.sin(a)).toFixed(2)}" r="3.3"${i < on ? ` class="on${i === 0 ? ' r' : ''}"` : ''} style="--i:${i}"/>`); }
+  return `<div class="ring" role="img" aria-label="Score ${p.toFixed(1)} percent"><svg viewBox="0 0 160 160" aria-hidden="true">${d.join('')}</svg>
+    <div class="ring-t" aria-hidden="true"><b>${dn(p.toFixed(1))}<small>%</small></b><span>score</span></div></div>`;
+}
+// Error bars and empty answers for a certificate. The contract doesn't carry these yet;
+// the page reads them from the evidence bundle once its hash checks out.
+function errLine(s, empty, perfect) {
+  const k = s?.samples ?? 1, bars = [];
+  if (!perfect && s?.rerun_se_bps != null) bars.push(`±${pct(Math.round(1.96 * s.rerun_se_bps))} rerun`);
+  if (!perfect && s?.item_se_bps != null) bars.push(`±${pct(Math.round(1.96 * s.item_se_bps))} items`);
+  let t = bars.length ? ` Error bars (95%): ${bars.join(', ')}, ${k} answer${k === 1 ? '' : 's'} per item.` : s && k > 1 ? ` ${k} answers per item.` : '';
+  if (empty) t += ` ${empty} answer${empty === 1 ? '' : 's'} came back empty at the token limit.`;
+  return t;
+}
+// A perfect score on a small fixed set says the model passed these items, nothing wider.
+const floorLine = (c) => c.score_bps === 10000 && c.items > 0 ? ` ${c.items === 1 ? 'The one item' : `All ${c.items} items`} passed in this run. A fixed set this size does not establish a pass rate on other questions.` : '';
+const field = (k, v, { copy, wide } = {}) => `<div${wide ? ' class="w"' : ''}><dt>${k}</dt><dd><span>${esc(v)}</span>${copy ? copyBtn(copy) : ''}</dd></div>`;
+function openCert(id) {
+  const c = certs.get(id), lv = level(c), all = c.tee && c.tee.signed_responses === c.items && lv !== 'unknown';
+  const stamp = !c.tee ? `<span class="stamp no">${ICON.shieldx}No TEE</span>`
+    : `<span class="stamp ${!all ? 'no' : lv === 'gateway' ? 'gw' : 'ok'}">${ICON.shield}${cap(LEVEL_NAME[lv])} · ${c.tee.signed_responses}/${c.items} reported signed</span>`;
+  const signedAll = lv === 'enclave' ? 'The model runs in NEAR AI\'s own TDX + GPU enclave, and every answer is signed by that enclave\'s key or, for a streamed answer, by the attested gateway. The evidence says which.' : 'NEAR AI\'s attested gateway signed every answer after verifying the third-party enclave.';
+  const expl = !c.tee ? 'No enclave evidence, so the answers could have come from anywhere.' : lv === 'unknown' ? 'The signing key on this certificate has no published hardware proof, so it is not known to be an enclave key.' : all ? signedAll : `Only ${c.tee.signed_responses} of ${c.items} answers carry an enclave signature.`;
+  const grading = datasets.get(c.dataset_id)?.grading;
+  const how = c.judge_model ? `graded by <b>${esc(c.judge_model)}</b> in a TEE` : esc(GRADING_HOW[grading] ?? 'graded objectively');
+  openDialog(`Certificate #${c.id} · set #${c.dataset_id}`, c.model, `
+    <div class="cert-top">${ring(c.score_bps / 100)}<div>${stamp}<p>${expl} Scored over ${c.items} sealed item${c.items === 1 ? '' : 's'}, ${how}.${floorLine(c)}<span id="cert-x">${esc(errLine(c.stats, c.empty, c.score_bps === 10000))}</span></p></div></div>
+    ${c.breakdown?.length ? `<div class="ctiers">${c.breakdown.map((t) => `<div class="ctier"><span>${esc(t.label)}<em>${t.items} item${t.items === 1 ? '' : 's'}</em></span><b>${dn(pct(t.score_bps))}</b>${dots(t.score_bps, 16)}</div>`).join('')}</div>` : ''}
+    <dl class="fields">
+      ${field('Eval set root', c.dataset_root, { copy: c.dataset_root, wide: true })}
+      ${field('Evidence hash', c.evidence_hash, { copy: c.evidence_hash, wide: true })}
+      ${field('Signing key', `${c.tee?.signing_address ?? 'none'} · ${c.tee?.signing_algo ?? '-'}`, { copy: c.tee?.signing_address, wide: true })}
+      ${field('Attestation hash', c.tee?.attestation_hash ?? '-', { copy: c.tee?.attestation_hash, wide: true })}
+      ${field('Judge model', c.judge_model ?? (grading === 'tests' ? 'none (hidden tests)' : 'none (objective grading)'))}
+      ${field('Runner', c.runner ?? '-')}
+      ${field('Read from', SNAP ? 'local demo snapshot (simulated)' : `${CONTRACT} · NEAR ${NETWORK}${IS_OFFICIAL ? '' : ' · not the official BlindBench deployment'}`, { wide: true })}
+    </dl>
+    <div class="vbox"><h3>${ICON.scan}Verify it yourself</h3><p>Your browser recomputes the evidence hash, checks every signature and checks each signing key's Intel TDX quote. An evidence file you load is checked on this device and not uploaded. The published evidence and key proofs are fetched from this site when needed.</p>
+      ${c.evidence_url ? '' : '<p>No evidence file is published here for this certificate. Ask its runner for the file, then load it below.</p>'}
+      <div class="vrow">${c.evidence_url ? `<button class="btn" id="ev-url">${ICON.shield}Fetch and verify the evidence</button>` : ''}<label class="drop">${ICON.file}<span>Load an evidence file</span><input type="file" id="ev" accept="application/json"></label></div>
+      <div id="vout" aria-live="polite"></div></div>`, `#cert-${c.id}`);
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    $('#dlg-b').classList.add('ready');
+  }));
+  $('#ev').onchange = async (e) => {
+    const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+    runVerify(c, async () => {
+      if (f.size > EVIDENCE_MAX) throw new Error(`that file is ${(f.size / 1e6).toFixed(1)} MB; an evidence file is well under ${EVIDENCE_MAX / 1e6} MB`);
+      try { return JSON.parse(await f.text()); } catch { throw new Error('that file is not JSON, so it is not an evidence file'); }
+    });
+  };
+  if (c.evidence_url) $('#ev-url').onclick = () => runVerify(c, () => getJson(c.evidence_url, { ms: 20000, max: EVIDENCE_MAX, what: 'the evidence file' }), $('#ev-url'));
+}
+
+const EVIDENCE_MAX = 8e6; // bytes; published bundles are about 30 KB
+function bundleShape(b) {
+  if (!b || typeof b !== 'object' || !Array.isArray(b.items)) return ['the evidence is not a bundle with a list of items'];
+  if (!b.items.length) return ['the evidence lists no items'];
+  const out = [], seen = new Set();
+  if (typeof b.model !== 'string' || !b.model) out.push('the evidence names no model');
+  if (!Number.isInteger(b.score_bps) || b.score_bps < 0 || b.score_bps > 10000) out.push('score_bps is not a whole number from 0 to 10000');
+  const k = b.sampling?.samples ?? 1;
+  if (!Number.isInteger(k) || k < 1) out.push('sampling.samples is not a positive whole number');
+  b.items.forEach((it, n) => {
+    if (!it || typeof it !== 'object') return out.push(`entry ${n}: not an object`);
+    if (!Number.isInteger(it.index) || it.index < 0) return out.push(`entry ${n}: no item index`);
+    const sample = it.sample ?? 0;
+    if (!Number.isInteger(sample) || sample < 0) out.push(`item ${it.index}: sample is not a whole number`);
+    if (seen.has(`${it.index}:${sample}`)) out.push(`item ${it.index}: sample ${sample} appears twice`);
+    seen.add(`${it.index}:${sample}`);
+    if (typeof it.score !== 'number' || !Number.isFinite(it.score) || it.score < 0 || it.score > 1) out.push(`item ${it.index}: score is not a number from 0 to 1`);
+    for (const key of ['leaf', 'request_sha256', 'response_sha256']) if (typeof it[key] !== 'string') out.push(`item ${it.index}: no ${key}`);
+  });
+  return out.slice(0, 20);
+}
+function canon(v) {
+  if (Array.isArray(v)) return '[' + v.map(canon).join(',') + ']';
+  if (v && typeof v === 'object') return '{' + Object.keys(v).sort().filter((k) => v[k] !== undefined).map((k) => JSON.stringify(k) + ':' + canon(v[k])).join(',') + '}';
+  return JSON.stringify(v);
+}
+async function sha256hex(s) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)); return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, '0')).join(''); }
+
+let verifying = false; // one verification at a time, whichever control started it
+async function runVerify(c, getEvidence, btn) {
+  if (verifying) return;
+  verifying = true;
+  const out = $('#vout');
+  btn?.classList.add('busy');
+  out.innerHTML = '<div class="scan"></div><div class="status">recomputing the evidence hash and checking signatures…</div>';
+  const wait = new Promise((r) => setTimeout(r, REDUCED ? 0 : 750));
+  try {
+    verifyMessage ??= (await import('./vendor/ethers.min.js')).verifyMessage;
+    const b = await getEvidence(); const res = await verify(c, b); await wait;
+    const bad = res.some(([s]) => s === false), warned = res.some(([s]) => s === 'warn'), sim = b.attestation?.simulated;
+    out.innerHTML = `<ol class="checks">${res.map(([s, t, d], i) => `<li class="${s === true ? 'ok' : s === false ? 'bad' : s === 'warn' ? 'warn' : 'info'}" style="--i:${i}"><i aria-hidden="true">${s === true ? ICON.check : s === false ? ICON.x : s === 'warn' ? '!' : '·'}</i><div><b>${esc(t)}</b>${d ? `<span>${esc(d)}</span>` : ''}</div></li>`).join('')}</ol>
+      <div class="verdict ${bad ? 'bad' : 'ok'}" style="--i:${res.length}"><span class="vt">${bad ? ICON.shieldx + 'Not verified · see the failed checks' : ICON.shield + (warned ? 'Checks passed, with warnings · read the marked lines' : 'Evidence checks passed · signatures, TDX quotes, set root and score')}</span>${sim && !bad ? '<em>simulated enclave</em>' : ''}</div>`;
+    // bring the verdict into view once it has landed
+    if (!REDUCED) setTimeout(() => out.querySelector('.verdict')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), res.length * 150 + 350);
+  } catch (e) {
+    await wait;
+    const msg = String(e?.message ?? e);
+    const net = e?.name === 'TimeoutError' || e?.name === 'AbortError' || /failed to fetch|networkerror|load failed|dynamically imported module/i.test(msg);
+    out.innerHTML = `<div class="status err">Could not verify: ${esc(net ? 'a file this check needs did not load. Check your connection and try again.' : e instanceof TypeError || e instanceof RangeError ? `this file is not shaped like an evidence bundle (${msg})` : msg)}</div>`;
+  }
+  finally { verifying = false; btn?.classList.remove('busy'); }
+}
+
+const hexBytes = (h) => Uint8Array.from(String(h).match(/../g) ?? [], (x) => parseInt(x, 16));
+const toHex = (buf) => [...new Uint8Array(buf)].map((x) => x.toString(16).padStart(2, '0')).join('');
+// The same Merkle tree as the CLI: sha256 over each pair of nodes, an odd node paired with itself.
+async function merkleRoot(leaves) {
+  let level = leaves;
+  while (level.length > 1) {
+    const next = [];
+    for (let i = 0; i < level.length; i += 2) next.push(toHex(await crypto.subtle.digest('SHA-256', hexBytes(level[i] + (level[i + 1] ?? level[i])))));
+    level = next;
+  }
+  return level[0];
+}
+
+async function verify(c, b) {
+  const L = [];
+  // The evidence is untrusted input: check its shape first (same rules as the CLI's bundleShapeProblems).
+  const shape = bundleShape(b);
+  if (shape.length) return shape.map((p) => [false, 'The evidence file is malformed', p]);
+  // Where the certificate was read from. Anyone can deploy a contract that repeats a real
+  // certificate, so a pass on another deployment says nothing about the official one.
+  if (!SNAP) L.push(IS_OFFICIAL ? [null, `Certificate #${c.id} read from ${CONTRACT} on NEAR ${NETWORK}`, 'the official BlindBench deployment']
+    : ['warn', `Certificate #${c.id} read from ${CONTRACT} on NEAR ${NETWORK}: not the official BlindBench deployment`, 'the checks below compare the evidence with what that contract says, whoever runs it']);
+  const h = await sha256hex(canon(b));
+  L.push([h === c.evidence_hash, `Evidence hash ${h === c.evidence_hash ? 'matches' : 'does NOT match'} the certificate`, `sha256 ${short(h, 16, 12)}`]);
+  L.push([b.dataset_root === c.dataset_root, `Eval set root ${b.dataset_root === c.dataset_root ? 'matches' : 'differs from'} the onchain commitment`, short(b.dataset_root, 16, 12)]);
+  L.push([b.model === c.model, b.model === c.model ? 'The evidence is for the model on the certificate' : `The evidence is for ${b.model}, not the model on the certificate`, b.model]);
+  const lower = (xs) => (xs ?? []).map((a) => String(a).toLowerCase());
+  const own = lower(b.attestation?.signing_addresses);
+  const keys = [...own, ...lower(b.attestation?.gateway_addresses)];
+  const judgeKeys = [...lower(b.judge_attestation?.signing_addresses), ...lower(b.judge_attestation?.gateway_addresses)];
+  // The gateway signs "<req>:<resp>"; a model enclave signs "<model>:<req>:<resp>" and must name this model.
+  const signer = (rec, model) => {
+    const pair = `${rec.request_sha256}:${rec.response_sha256}`;
+    if (rec.signed_text !== pair && rec.signed_text !== `${model}:${pair}`) return null;
+    try { return verifyMessage(rec.signed_text, rec.signature).toLowerCase(); } catch { return null; }
+  };
+  let ok = 0, enclave = 0, jOk = 0, jAll = 0, jMissing = 0, jStray = 0;
+  const per = new Map(); // item index -> { leaf, signed }
+  b.items.forEach((it, i) => {
+    const who = signer(it, b.model), good = who != null && keys.includes(who);
+    if (good) { ok++; if (b.attestation?.level === 'model-enclave' && own.includes(who)) enclave++; }
+    const k = it.index, g = per.get(k) ?? { leaf: it.leaf, signed: true, n: 0 };
+    if (g.leaf !== it.leaf) g.leaf = null;
+    g.signed = g.signed && good; g.n++; per.set(k, g);
+    const calls = it.judge ? (it.judge.passes ?? [it.judge]).flatMap((p) => p.calls ?? [p]) : [];
+    for (const call of calls) {
+      jAll++;
+      const jw = signer(call, b.judge_model);
+      if (jw != null && judgeKeys.includes(jw)) jOk++;
+    }
+    // A judged run needs a signed judge call for every answer; an empty answer scores 0 unjudged.
+    if (b.judge_model && !calls.length && !(it.empty === true && it.score === 0)) jMissing++;
+    if (!b.judge_model && calls.length) jStray++;
+  });
+  L.push([ok === b.items.length, `${ok}/${b.items.length} answers carry a valid signature from a key declared in the evidence`, 'ECDSA over sha256(request):sha256(response), recovered in your browser · the lines below check each key against a hardware quote']);
+  // Same rule as the CLI: evidence from the offline demo's simulated enclave cannot stand behind a certificate on a real contract.
+  if (b.attestation?.simulated && !SNAP) L.push([false, 'This evidence came from the simulated enclave, but the certificate is on a live contract', 'simulated evidence only belongs to the local demo ledger']);
+  if (b.judge_attestation?.simulated && !b.attestation?.simulated) L.push([false, 'The judge ran in the simulated enclave', '']);
+  // The evidence names its own signing keys, so each key needs a hardware proof that
+  // does not come from the evidence: an Intel TDX quote published with this page,
+  // checked here down to Intel's root certificate (tdx.mjs).
+  if (!b.attestation?.simulated) {
+    const proofs = new Map(); // one fetch per key, however many roles it is checked in
+    const proofFor = (addr) => {
+      if (!/^0x[0-9a-f]{40}$/.test(addr)) return null;
+      if (!proofs.has(addr)) proofs.set(addr, getJson(`attestations/${addr}.json`, { ms: 20000, max: 2e6, what: 'the key proof' }).catch((e) => { if (/HTTP 404/.test(e.message)) return null; throw new Error(`its published proof did not load (${e.message}). Try again`); }));
+      return proofs.get(addr);
+    };
+    const rows = [...(await proveKeys(b.attestation, b.model, proofFor)), ...(b.judge_attestation ? (await proveKeys(b.judge_attestation, b.judge_model, proofFor)).map((r) => ({ ...r, judge: true })) : [])];
+    if (!rows.some((r) => !r.judge)) L.push([false, 'The evidence names no signing key', '']);
+    // Every row is judged on its own result. Only a row that says exactly what an earlier
+    // one said (the gateway key usually serves both the model and the judge) is folded away.
+    const said = new Set();
+    for (const r of rows) {
+      const same = `${r.address}|${r.role}|${r.ok}|${r.why ?? ''}|${r.warn ?? ''}`;
+      if (said.has(same)) continue;
+      said.add(same);
+      const what = `${r.judge ? "Judge's " : ''}${r.role === 'model' ? 'model-enclave' : 'gateway'} key ${short(r.address, 8, 6)}`;
+      if (!r.ok) { L.push([false, `${cap(what)} has no valid hardware proof`, r.why]); continue; }
+      const gpus = Number(r.proof.gpu?.gpus);
+      L.push([r.warn ? 'warn' : true, `Intel TDX quote validated for ${what}`, [
+        "quote and certificate chain checked to Intel's root in your browser", 'the quote binds this address',
+        r.warn ?? `Intel TCB status ${r.proof.tcb?.tcb_status}`,
+        `${r.role === 'model' ? 'role and model name' : 'role'} as listed in the published proof registry`,
+        r.proof.gpu ? `NVIDIA verdict for ${Number.isFinite(gpus) ? gpus : 'the'} GPU${gpus === 1 ? '' : 's'} recorded when the quote was fetched, not rechecked here` : null,
+        `proof recorded ${String(r.proof.fetched_at ?? '').slice(0, 10)}`].filter(Boolean).join(' · ')]);
+    }
+  }
+  // Every item of the committed set, and nothing else: the leaves must hash up to the root.
+  const idx = [...per.keys()].sort((x, y) => x - y);
+  const whole = idx.every((v, i) => v === i) && idx.every((i) => /^[0-9a-f]{64}$/.test(per.get(i).leaf ?? ''));
+  const rootOk = whole && await merkleRoot(idx.map((i) => per.get(i).leaf)) === b.dataset_root;
+  L.push([rootOk, rootOk ? `The ${idx.length} item leaves hash up to the set's Merkle root` : 'The item leaves do NOT hash up to the set\'s Merkle root', 'the evidence lists a leaf for every committed item, and no other · that each leaf\'s question is what was sent is trusted to the runner']);
+  L.push([idx.length === c.items, idx.length === c.items ? `The evidence covers the ${c.items} items on the certificate` : `The evidence covers ${idx.length} items, the certificate says ${c.items}`, '']);
+  const perItem = b.sampling?.samples ?? 1;
+  if ([...per.values()].some((g) => g.n !== perItem)) L.push([false, `Every item should have ${perItem} answer${perItem === 1 ? '' : 's'}`, 'the evidence has more or fewer for some items']);
+  if (c.tee) {
+    const signedItems = [...per.values()].filter((g) => g.signed).length;
+    const same = signedItems === c.tee.signed_responses && b.attestation?.report_sha256 === c.tee.attestation_hash && String(c.tee.signing_address).toLowerCase() === String(b.attestation?.signing_addresses?.[0]).toLowerCase();
+    L.push([same, same ? 'Signed-answer count, signing key and attestation hash match the certificate' : 'Signed-answer count, signing key or attestation hash differs from the certificate', `${signedItems}/${idx.length} items signed · attestation ${short(b.attestation?.report_sha256, 12, 8)}`]);
+  }
+  if (b.attestation?.level) L.push([null, `Attestation level: ${b.attestation.level}${b.attestation.provider ? ' (' + b.attestation.provider + ')' : ''}`, b.attestation.level === 'model-enclave' ? `${enclave} answer${enclave === 1 ? '' : 's'} signed by the model enclave itself${ok > enclave ? `, ${ok - enclave} by the attested gateway (streamed)` : ''}` : '']);
+  if (b.judge_model && b.judge_model === b.model) L.push([false, 'The model graded its own answers', b.judge_model]);
+  if (jMissing) L.push([false, `${jMissing} answer${jMissing === 1 ? ' has' : 's have'} no signed judge call`, 'a judged set needs the judge\'s signed call for every answer']);
+  if (jStray) L.push([false, 'Judge calls in a run that names no judge', '']);
+  if (jAll) L.push([jOk === jAll, `${jOk}/${jAll} judge calls carry a valid signature from a key the evidence declares for the judge`, `${b.judge_model}${(c.judge_model ?? null) === (b.judge_model ?? null) ? '' : ' · the certificate names a different judge'}`]);
+  if ((c.judge_model ?? null) !== (b.judge_model ?? null)) L.push([false, 'The judge in the evidence is not the judge on the certificate', `${b.judge_model ?? 'none'} vs ${c.judge_model ?? 'none'}`]);
+  // With several answers per item (--samples k), average each item's answers first, then the items.
+  const groups = new Map();
+  b.items.forEach((it) => { const k = it.index; if (!groups.has(k)) groups.set(k, []); groups.get(k).push(it.score); });
+  const means = [...groups.values()].map((xs) => xs.reduce((s, x) => s + x, 0) / xs.length);
+  const mean = Math.round(means.reduce((s, x) => s + x, 0) / means.length * 10000), multi = groups.size < b.items.length;
+  const scoreOk = Math.abs(mean - c.score_bps) <= 1 && b.score_bps === c.score_bps;
+  L.push([scoreOk, scoreOk ? `Score ${pct(c.score_bps)} equals the mean of the ${multi ? `${groups.size} item means` : 'item scores in the evidence'}` : `Score ${pct(c.score_bps)} on the certificate is not what the evidence gives`, `recomputed ${pct(mean)}${multi ? ` from ${b.items.length} answers` : ''} · evidence states ${pct(b.score_bps)} · the item scores come from the runner's grader`]);
+  const parts = (xs) => JSON.stringify((xs ?? []).map((p) => [p.label, p.items, p.score_bps]));
+  if (parts(c.breakdown) !== parts(b.breakdown)) L.push([false, 'The score breakdown in the evidence is not the one on the certificate', '']);
+  if (b.stats) {
+    const bars = [b.stats.rerun_se_bps != null && `±${pct(Math.round(1.96 * b.stats.rerun_se_bps))} rerun`, b.stats.item_se_bps != null && `±${pct(Math.round(1.96 * b.stats.item_se_bps))} items`, `k=${b.stats.samples}`].filter(Boolean);
+    L.push([null, 'Error bars (95%)', bars.join(' · ')]);
+  }
+  const empty = b.items.filter((i) => i.empty).length, retried = b.items.filter((i) => i.empty_retry && !i.empty).length;
+  if (empty) L.push([null, `${empty} empty answer${empty === 1 ? '' : 's'} at the token limit (scored 0)`, 'the model spent its output budget reasoning; the retry with reasoning off is recorded on the item']);
+  if (retried) L.push([null, `${retried} answer${retried === 1 ? ' was' : 's were'} retried with reasoning off`, 'the first try came back empty at the token limit']);
+  const agree = b.items.map((i) => i.judge?.agreement).filter((x) => x != null);
+  if (b.sampling) {
+    const s = b.sampling, extra = [s.samples > 1 && `${s.samples} answers per item`, s.judge_passes > 1 && `${s.judge_passes} judge passes`, s.judge_protocol === 'v2' && 'judge protocol v2'].filter(Boolean);
+    L.push([null, 'Run protocol', [`max ${s.max_tokens} tokens`, `temperature ${s.temperature}`, `thinking ${s.thinking === false ? 'off' : 'on'}`, ...extra].join(' · ')]);
+  }
+  if (agree.length) L.push([null, `Judge passes agreed on ${pct(Math.round(agree.reduce((s, x) => s + x, 0) / agree.length * 10000))} of findings`, 'each pass is signed; findings are decided by majority vote']);
+  if (b.attestation?.simulated && SNAP) L.push(['warn', 'This evidence came from the SIMULATED enclave', 'the offline demo; live runs use NEAR AI Cloud attestation']);
+  // the certificate panel shows the same numbers, once the evidence is known to be this certificate's
+  if (h === c.evidence_hash && !c.stats && !c.empty && (b.stats || empty)) {
+    const x = $('#cert-x'); if (x) { x.textContent = errLine(b.stats, empty, c.score_bps === 10000); x.classList.add('fresh'); }
+  }
+  return L;
+}
+
+// ---------- wallet (NEAR Connect) ----------
+let connector = null, account = null;
+async function getConnector() {
+  if (connector) return connector;
+  const { NearConnector } = await import('./vendor/near-connect.min.js');
+  // The wallet list is this site's own file (vendor/wallets.json), not one fetched from another
+  // host, so nobody outside can add a wallet to it; where a wallet publishes its connector code
+  // on GitHub, the list names an exact commit. On mainnet (local only) the connector's own list is used.
+  connector = new NearConnector({ network: NETWORK, features: { signAndSendTransaction: true, [NETWORK]: true }, footerBranding: null, cspNonce: NONCE, ...(NETWORK === 'testnet' ? { manifest: new URL('vendor/wallets.json', location.href).href } : {}) });
+  connector.on('wallet:signIn', (t) => setAccount(t.accounts?.[0]?.accountId ?? null));
+  connector.on('wallet:signOut', () => setAccount(null));
+  return connector;
+}
+const WALLETS = ['#wallet', '#wallet-m'];
+function setAccount(id) {
+  account = id;
+  WALLETS.forEach((s) => { const b = $(s); b.textContent = id ? short(id, 14, 6) : 'Connect wallet'; b.title = id ? `${id} · click to disconnect` : 'Needs a NEAR testnet account (a name ending in .testnet)'; b.classList.toggle('on', !!id); });
+}
+async function connect() { const nc = await getConnector(); await nc.connect(); const w = await nc.wallet(); const a = await w.getAccounts(); setAccount(a?.[0]?.accountId ?? null); return w; }
+WALLETS.forEach((s) => { $(s).onclick = async (e) => {
+  const b = e.currentTarget; b.classList.add('busy'); window.setMenu?.(false);
+  try {
+    if (account) { await (await getConnector()).disconnect(); setAccount(null); toast('Wallet disconnected'); }
+    else { await connect(); if (account) toast(`Connected as ${short(account, 14, 6)}`); }
+  } catch (err) { console.warn(err); if (/reject|cancel|closed/i.test(String(err?.message ?? err))) toast('Connection cancelled'); else toast(`Wallet: ${String(err?.message ?? err).slice(0, 80)}`, true); }
+  finally { b.classList.remove('busy'); }
+}; });
+// The connector fetches wallet code from the wallets' hosts, so it is loaded at start only
+// when this browser connected a wallet here before; otherwise it waits for "Connect wallet".
+async function restore() {
+  if (SNAPSHOT) return;
+  try { if (!localStorage.getItem('selected-wallet')) return; } catch { return; }
+  try { const nc = await getConnector(); const { accounts } = await nc.getConnectedWallet(); setAccount(accounts?.[0]?.accountId ?? null); } catch {}
+}
+
+// ---------- run a model: pay in NEAR, or preview a quote from another chain ----------
+const ORIGINS = [
+  ['USDC on Base', 'nep141:base-0x833589fcd6edb6e08f4c7c32d4f71b54bda02913.omft.near', 6, 'evm'],
+  ['USDC on Arbitrum', 'nep141:arb-0xaf88d065e77c8cc2239327c5edb3a432268e5831.omft.near', 6, 'evm'],
+  ['USDC on Ethereum', 'nep141:eth-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.omft.near', 6, 'evm'],
+  ['USDC on Solana', 'nep141:sol-5ce3bf3a31af18be40ba30f721101b4341690186.omft.near', 6, 'sol'],
+  ['ETH on Base', 'nep141:base.omft.near', 18, 'evm'],
+  ['ETH on Arbitrum', 'nep141:arb.omft.near', 18, 'evm'],
+  ['SOL on Solana', 'nep141:sol.omft.near', 9, 'sol'],
+];
+// Dry quotes need a syntactically valid refund address on the origin chain.
+// (1Click rejects burn and system-program addresses; these two are accepted.)
+const PLACEHOLDER_REFUND = { evm: '0x4838B106FCe9647Bdf1E7877BF73cE8B0BAD5f97', sol: 'So11111111111111111111111111111111111111112' };
+const fmt = (raw, dec) => { const s = BigInt(raw).toString().padStart(dec + 1, '0'); const w = s.slice(0, -dec), f = s.slice(-dec).replace(/0+$/, ''); return f ? `${w}.${f.slice(0, 6)}` : w; };
+
+function openRun(dsId) {
+  const ds = datasets.get(dsId);
+  const lvBadge = (lv) => lv === 'enclave' ? `<span class="badge ok">${ICON.shield}model enclave</span>` : `<span class="badge gw">${ICON.shield}gateway + TEE</span>`;
+  openDialog(`Set #${ds.id} · ${near(ds.price)} NEAR per run`, 'Run a model on this set', `
+    <div class="stepl"><span>01</span>Choose a TEE model</div>
+    <div class="models">${MODELS.map(([m, lv], i) => { const [org, name] = splitModel(m); return `<label class="mopt"><input type="radio" name="m" value="${esc(m)}"${i ? '' : ' checked'}><span class="rd"></span><span class="mt"><b>${esc(name)}</b><small>${esc(org.replace(/\/$/, ''))}</small></span>${lvBadge(lv)}</label>`; }).join('')}</div>
+    <div class="stepl"><span>02</span>Pay for the run</div>
+    <div class="tabs" role="tablist" aria-label="How to pay"><button class="tab on" role="tab" data-tab="near" aria-selected="true">NEAR wallet</button><button class="tab" role="tab" data-tab="intents" aria-selected="false" tabindex="-1">Other chains · quote preview</button></div>
+    <div class="panel" data-pane="near" role="tabpanel"><h3>Pay ${near(ds.price)} NEAR from your NEAR wallet</h3>
+      <p>Calls <code>request_run</code> on ${esc(CONTRACT)}. The payment sits in escrow until the set's runner posts the certificate. If none is posted within 24 hours, you can take it back with <code>cancel_run</code>.</p>
+      ${SNAP ? '<div class="status" style="color:var(--red-t)">This page is showing the simulated demo ledger. Open it without <code>?snapshot</code> to pay on the live testnet contract.</div>'
+        : !IS_OFFICIAL ? `<div class="status" style="color:var(--red-t)">Paying is switched off here: this page is reading ${esc(CONTRACT)} on NEAR ${esc(NETWORK)}, which is not the official BlindBench deployment.</div>`
+        : `<p class="note"><b>Hackathon prototype.</b> This sends test NEAR, which has no real value, so your wallet needs a NEAR <b>testnet</b> account (a name ending in .testnet); an account ending in .near is a mainnet account and cannot sign in here. Your request is recorded onchain, but the runner that serves public requests is switched off in this version, so no certificate will be posted. You can take the payment back after 24 hours.</p><button class="btn" id="paynear">${account ? `Send test request · ${near(ds.price)} test NEAR as ${esc(short(account, 14, 6))}` : `Connect wallet and send a test request · ${near(ds.price)} test NEAR`} ${ICON.arrow}</button><div class="status" id="pout"></div>`}</div>
+    <div class="panel" data-pane="intents" role="tabpanel" hidden><h3>Quote from another chain with NEAR Intents (preview)</h3>
+      <p>1Click swaps your asset into exactly ${near(ds.price)} wNEAR, delivered to your NEAR account, ready for <code>request_run</code>. This panel shows the live quote only: sending the swap and the run request in one step is on the roadmap. NEAR Intents runs on mainnet only${NETWORK === 'testnet' ? ', so on this testnet deployment this is a dry quote and nothing is sent' : ''}.</p>
+      <div class="row"><select id="org" aria-label="Pay with">${ORIGINS.map(([n], i) => `<option value="${i}">${esc(n)}</option>`).join('')}</select><button class="btn ghost" id="quote">Get quote</button></div>
+      <div id="qout" aria-live="polite"></div></div>`, `#run-${ds.id}`);
+  const tabs = [...document.querySelectorAll('#dlg-b .tab')];
+  const pick = (t) => {
+    tabs.forEach((x) => { x.classList.toggle('on', x === t); x.setAttribute('aria-selected', x === t); x.tabIndex = x === t ? 0 : -1; });
+    document.querySelectorAll('#dlg-b [data-pane]').forEach((p) => { p.hidden = p.dataset.pane !== t.dataset.tab; });
+  };
+  tabs.forEach((t, i) => {
+    t.onclick = () => pick(t);
+    t.onkeydown = (e) => { const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key]; if (d) { e.preventDefault(); const n = tabs[(i + d + tabs.length) % tabs.length]; pick(n); n.focus(); } };
+  });
+  if ($('#paynear')) $('#paynear').onclick = () => payNear(ds);
+  $('#quote').onclick = () => quoteIntents(ds);
+}
+
+let paying = false;
+const PRICE_CAP = 10n * 10n ** 24n; // 10 NEAR, in yoctoNEAR
+async function payNear(ds) {
+  const out = $('#pout'), btn = $('#paynear'); const model = $('#dlg-b input[name=m]:checked').value;
+  if (paying || !IS_OFFICIAL) return;
+  // The one transaction this page ever asks a wallet to sign: request_run on the official contract,
+  // for the price shown on the button. A price above the cap is refused here, so a wrong answer
+  // from an RPC endpoint cannot turn the button into a large payment.
+  if (BigInt(ds.price) > PRICE_CAP) { out.className = 'status err'; out.textContent = `Not sent: this set reports a price of ${near(ds.price)} NEAR, above the ${near(PRICE_CAP)} NEAR this page will send.`; return; }
+  paying = true;
+  let link = '', unknown = false;
+  out.className = 'status';
+  btn.classList.add('busy'); btn.disabled = true;
+  try {
+    out.textContent = 'opening wallet…';
+    const w = account ? await (await getConnector()).wallet() : await connect();
+    if (!account) { out.textContent = 'not connected'; return; }
+    const res = await w.signAndSendTransaction({ receiverId: CONTRACT, actions: [{ type: 'FunctionCall', params: {
+      methodName: 'request_run', args: { dataset_id: ds.id, model }, gas: '30000000000000', deposit: String(ds.price) } }] });
+    const txid = res?.transaction?.hash ?? res?.transaction_outcome?.id;
+    if (typeof txid === 'string' && /^[1-9A-HJ-NP-Za-km-z]{32,64}$/.test(txid)) link = `<a href="${EXPLORER}/txns/${txid}" target="_blank" rel="noopener">transaction</a>`;
+    // Only a transaction that returned a run id counts: a failed one took no payment.
+    const failure = res?.status?.Failure ?? res?.final_execution_status?.Failure;
+    if (failure) throw new Error(`the transaction failed, so nothing was paid: ${JSON.stringify(failure).slice(0, 160)}`);
+    let runId = null;
+    try { const v = JSON.parse(atob(res.status.SuccessValue)); if (typeof v === 'number' && Number.isSafeInteger(v) && v >= 0) runId = v; } catch {}
+    if (runId == null) { unknown = true; throw new Error('the wallet did not report a result with a run id, so the outcome is unknown'); }
+    out.className = 'status okk';
+    out.innerHTML = `✓ Request recorded as run ${runId} for ${esc(model)}${link ? ` · ${link}` : ''}\nPublic runs are paused in this version, so no certificate is expected for it. The payment is held by the contract; you can take it back with cancel_run from ${esc(new Date(Date.now() + 24 * 3600 * 1000).toLocaleString())}. Keep the run number and the transaction link.`;
+    toast('Request recorded · payment held in escrow');
+  } catch (e) { out.innerHTML = `<span class="err">${esc(e.message ?? e)}${unknown ? `. Open the ${link || 'transaction in your wallet'} to see what happened before trying again.` : ''}</span>`; }
+  finally { paying = false; btn.classList.remove('busy'); btn.disabled = false; }
+}
+
+async function quoteIntents(ds) {
+  const out = $('#qout'), btn = $('#quote'); const [name, asset, dec, kind] = ORIGINS[Number($('#org').value)];
+  out.innerHTML = '<div class="scan"></div><div class="status">asking 1Click for a quote…</div>';
+  btn.classList.add('busy');
+  const recipient = NETWORK === 'mainnet' && account ? account : 'intents.near';
+  const ask = async (amount) => {
+    const r = await fetch('https://1click.chaindefuser.com/v0/quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+      dry: true, swapType: 'EXACT_OUTPUT', slippageTolerance: 100, originAsset: asset, depositType: 'ORIGIN_CHAIN',
+      destinationAsset: 'nep141:wrap.near', amount: String(amount), refundTo: PLACEHOLDER_REFUND[kind], refundType: 'ORIGIN_CHAIN',
+      recipient, recipientType: 'DESTINATION_CHAIN', deadline: new Date(Date.now() + 30 * 60 * 1000).toISOString() }), signal: AbortSignal.timeout(20000) });
+    return { ok: r.ok, status: r.status, j: await r.json().catch(() => ({})) };
+  };
+  try {
+    let amount = BigInt(ds.price), note = '';
+    let res = await ask(amount);
+    // Below the bridge minimum, 1Click names the smallest amount it will route.
+    const min = String(res.j.message ?? '').match(/at least (\d+)/);
+    if (!res.j.quote && min) {
+      amount = BigInt(min[1]);
+      note = `The smallest swap 1Click routes is ${trimDec(near(amount))} NEAR, so this quotes that. The rest stays in your NEAR account for later runs.`;
+      res = await ask(amount);
+    }
+    if (!res.ok || !res.j.quote) throw new Error(res.j.message ?? `HTTP ${res.status}`);
+    const qt = res.j.quote;
+    out.innerHTML = `<div class="receipt">
+      <div class="big"><span>You send</span><b>≈ ${esc(trimDec(qt.amountInFormatted ?? fmt(qt.amountIn, dec)))} ${esc(name)}</b></div>
+      <div><span>Arrives as</span><b>${esc(trimDec(qt.amountOutFormatted ?? near(qt.amountOut)))} wNEAR</b></div>
+      ${qt.timeEstimate ? `<div><span>Settles in</span><b>about ${esc(qt.timeEstimate)} s</b></div>` : ''}
+      <div><span>Recipient</span><b>${esc(recipient)}${recipient === 'intents.near' ? ' (placeholder for the dry quote)' : ''}</b></div></div>
+      ${note ? `<p class="note">${esc(note)}</p>` : ''}<p class="note">On mainnet, a live quote returns a deposit address on ${esc(name.split(' on ')[1])}: send there, unwrap the wNEAR that arrives into NEAR, then pay <code>request_run</code>.</p>`;
+  } catch (e) { out.innerHTML = `<div class="status"><span class="err">1Click did not quote: ${esc(e?.name === 'TimeoutError' ? 'no answer within 20 seconds' : e.message)}. Try again in a minute.</span></div>`; }
+  finally { btn.classList.remove('busy'); }
+}
+
+// Reference lines load alongside the ledger and never hold it up for longer than their own time limit.
+const refsReady = loadRefs();
+await load();
+restore();
+</script>
+</body>
+</html>

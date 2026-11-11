@@ -1,0 +1,197 @@
+{
+ "version": "blindbench-evidence/1",
+ "dataset_root": "ff9d67e9d4a26f739ca7ac31f88a8f9ea7c1bca9c7921539ac2a5d2a02a1b2a2",
+ "grading": "checklist",
+ "usage": {
+  "model": {
+   "calls": 4,
+   "prompt_tokens": 4739,
+   "completion_tokens": 61795,
+   "reasoning_tokens": 46204
+  },
+  "judge": {
+   "calls": 4,
+   "prompt_tokens": 23639,
+   "completion_tokens": 37307,
+   "reasoning_tokens": 33814
+  }
+ },
+ "model": "moonshotai/kimi-k2.6",
+ "judge_model": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+ "endpoint": "https://cloud-api.near.ai/v1",
+ "sampling": {
+  "max_tokens": 32768,
+  "temperature": 0.6,
+  "judge_max_tokens": 16384,
+  "judge_temperature": 0,
+  "thinking": true,
+  "model_params": {},
+  "judge_params": {
+   "chat_template_kwargs": {
+    "reasoning_effort": "low"
+   }
+  },
+  "samples": 1,
+  "judge_passes": 1,
+  "judge_protocol": "v2"
+ },
+ "attestation": {
+  "level": "gateway+3p-enclave",
+  "provider": "chutes",
+  "provider_verdict": {
+   "verified": true,
+   "tcb_status": "UpToDate",
+   "gpu_verdict": "PASS"
+  },
+  "signing_addresses": [
+   "0xb98a789cdc4817275f5155593ba73ef2a957e779"
+  ],
+  "gateway_addresses": [],
+  "signing_algo": "ecdsa",
+  "nonce": "b811244ce27bcd18cc0f4d177d77530fe00f8b8eeee52578648c00789816e53b",
+  "report_sha256": "e94ac8824561b67489b2983faaf6f16992845760de3b37e3d9b8632acf97e718",
+  "simulated": false
+ },
+ "judge_attestation": {
+  "level": "model-enclave",
+  "signing_addresses": [
+   "0xfe0071895500a9755c18044948ab4f4e1a7f337e"
+  ],
+  "gateway_addresses": [
+   "0xb98a789cdc4817275f5155593ba73ef2a957e779"
+  ],
+  "report_sha256": "14ec3efec7fb93febeac986cd4c461e8f34e0b3bb7bb5df3b0f91d0bfbc0c5b9",
+  "simulated": false
+ },
+ "items": [
+  {
+   "index": 0,
+   "leaf": "2f4cc1348ad55ce795d1ceeb7aed466212c062db98cdab7f4cb2b8e8e88b6eff",
+   "request_sha256": "328b3865c1706256ec145a074b4d0e0f94fb1812ae0b6a4516d3e20b0d6c2771",
+   "response_sha256": "2d4c7f21f916e305aa0347b4b045bcc5d4dcd3776c6bff268fe888e6e3ef992f",
+   "chat_id": "chatcmpl-bec431fd0eacf4ec",
+   "signature": "0x9a4066d09cd8e9e6ad1f6e5f459f7cd152c10e25b589c67340500ca4a55499a8132bd82ca9a2320ba19d301f7569b168298cd292fc9de01d7e88260822c24c721b",
+   "signed_text": "328b3865c1706256ec145a074b4d0e0f94fb1812ae0b6a4516d3e20b0d6c2771:2d4c7f21f916e305aa0347b4b045bcc5d4dcd3776c6bff268fe888e6e3ef992f",
+   "signing_address": "0xb98a789cdc4817275f5155593ba73ef2a957e779",
+   "thinking": true,
+   "empty_retry": false,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 1403,
+    "completion_tokens": 11821,
+    "reasoning_tokens": 7506
+   },
+   "signature_kind": "gateway",
+   "signature_valid": true,
+   "score": 0.8833,
+   "judge": {
+    "request_sha256": "b90c60840d1549f0e452e0f2ec39a8494a60af11c3e948b867087db61ff3f465",
+    "response_sha256": "6e2fda3eb964f214c61c12091e307b1198c37c4a30e4afd59de46e1e47b705c2",
+    "signature": "0x6d7cdc1d024f517fd8a5e66f7e52550209664cc3ebb5f4c36ce43cad9ede343938a798e0212dd372a62de7e637ea5d3ee2c0248332fad17f8a6dfd19e88aadde1b",
+    "signed_text": "deepseek-ai/DeepSeek-V4.1-Flash-1017:b90c60840d1549f0e452e0f2ec39a8494a60af11c3e948b867087db61ff3f465:6e2fda3eb964f214c61c12091e307b1198c37c4a30e4afd59de46e1e47b705c2",
+    "signature_valid": true,
+    "attempt": 0,
+    "protocol": "v2",
+    "pass": 0
+   }
+  },
+  {
+   "index": 1,
+   "leaf": "0bdb1fbe6f13197b2eea4a44cb85f2e2b9c2e59d82615f4222295716afe78c22",
+   "request_sha256": "c0141e7cb9251736609d2adb3bc6ad141c037f453c8d96d5dbfc050cd31d295e",
+   "response_sha256": "66b9e45475d17bd7c61f8e8309f15577a25fe05c24f0f76bfb454dcab9d9fbc5",
+   "chat_id": "chatcmpl-a3296cf2489aac0e",
+   "signature": "0xbe3632db6c87a7587a967cc0a3b2818adcb9bba75e4a061c8431fde4720d51184370fccc66ed28cde0bff9e4b0071aecb17c2cf5d6e353d63db41775950fc96f1b",
+   "signed_text": "c0141e7cb9251736609d2adb3bc6ad141c037f453c8d96d5dbfc050cd31d295e:66b9e45475d17bd7c61f8e8309f15577a25fe05c24f0f76bfb454dcab9d9fbc5",
+   "signing_address": "0xb98a789cdc4817275f5155593ba73ef2a957e779",
+   "thinking": true,
+   "empty_retry": false,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 628,
+    "completion_tokens": 17136,
+    "reasoning_tokens": 13827
+   },
+   "signature_kind": "gateway",
+   "signature_valid": true,
+   "score": 0.8548,
+   "judge": {
+    "request_sha256": "a9b6d4f71906f5b96d131bcc35eab3558b1f680f8c4084f9703a090f744e0bdc",
+    "response_sha256": "8b37e246410ebefa83ef7bca7bdc7927b187920dcc813381ee7e57a9599fe2c9",
+    "signature": "0x32c12bc9c9e5f2a2f4077b36330fa3bf8424cacaed32dff7bb1ab72bc34c5e7e1815133638f32a965090b6293e85c362f56aebc76be64bd2121cbf03a03af1931c",
+    "signed_text": "deepseek-ai/DeepSeek-V4.1-Flash-1017:a9b6d4f71906f5b96d131bcc35eab3558b1f680f8c4084f9703a090f744e0bdc:8b37e246410ebefa83ef7bca7bdc7927b187920dcc813381ee7e57a9599fe2c9",
+    "signature_valid": true,
+    "attempt": 0,
+    "protocol": "v2",
+    "pass": 0
+   }
+  },
+  {
+   "index": 2,
+   "leaf": "ab295b264dae8cfb0c17a278309db715afc993429b4ad237b903f2cf83555428",
+   "request_sha256": "05ce9397dfbe6ccc3f8a57e03e061fb0a79343a7a154babf67903a100113d40c",
+   "response_sha256": "dad31ba68cc7cbcddd56bf7860fc2675d0099e10df83e508514cd6438220821e",
+   "chat_id": "chatcmpl-8fcf7fdf593f9ed3",
+   "signature": "0xbad5be8f6ddb3c0d959172d57c36471487a01cb82601ea6b3818bf87b2c382c26b412739b82f20d22d0e5cc50a8c95ce74609ceed6e3b086428e327413fbce1e1b",
+   "signed_text": "05ce9397dfbe6ccc3f8a57e03e061fb0a79343a7a154babf67903a100113d40c:dad31ba68cc7cbcddd56bf7860fc2675d0099e10df83e508514cd6438220821e",
+   "signing_address": "0xb98a789cdc4817275f5155593ba73ef2a957e779",
+   "thinking": true,
+   "empty_retry": false,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 1351,
+    "completion_tokens": 14531,
+    "reasoning_tokens": 11446
+   },
+   "signature_kind": "gateway",
+   "signature_valid": true,
+   "score": 0.9091,
+   "judge": {
+    "request_sha256": "f58d21d296d7bbedfb1798c3569296b8d3616ce774a8e0c6b1fe10e9913adc0a",
+    "response_sha256": "d3443587310e00be3a96cc6d662d7f57db5dae0c0671cb19c6123641893b3f6b",
+    "signature": "0x1067746f04a170e500a4d59b75ceda2f2247379f92950c6fa69ffb7b37bfbf982694fb2b2ebf286fb1af82cedb7daa1d35fec6f25ec300ac9cea4741992945111c",
+    "signed_text": "deepseek-ai/DeepSeek-V4.1-Flash-1017:f58d21d296d7bbedfb1798c3569296b8d3616ce774a8e0c6b1fe10e9913adc0a:d3443587310e00be3a96cc6d662d7f57db5dae0c0671cb19c6123641893b3f6b",
+    "signature_valid": true,
+    "attempt": 0,
+    "protocol": "v2",
+    "pass": 0
+   }
+  },
+  {
+   "index": 3,
+   "leaf": "81e5b8deba447858ed6d9f0bf17358deaf8b4db08bb36e4a52b87cd4493db51c",
+   "request_sha256": "05b6b38835a0ab5e5e3165be3d847bde071d8a022a3e0c13a4e95226e083793a",
+   "response_sha256": "a339f6faf6cea5e89142d6d316210c51a33f38c34adb18e471afedf5eecb752a",
+   "chat_id": "chatcmpl-93d263699e185619",
+   "signature": "0x90075ff65fca925e6e4dabaac8693543914c5b3328a4a87a3a5cf56a8abdd213475ce205ec8bbb8af0a73daf63ebe23b407d22f3e63cef1fe75582a7bd4da3a11b",
+   "signed_text": "05b6b38835a0ab5e5e3165be3d847bde071d8a022a3e0c13a4e95226e083793a:a339f6faf6cea5e89142d6d316210c51a33f38c34adb18e471afedf5eecb752a",
+   "signing_address": "0xb98a789cdc4817275f5155593ba73ef2a957e779",
+   "thinking": true,
+   "empty_retry": false,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 1357,
+    "completion_tokens": 18307,
+    "reasoning_tokens": 13425
+   },
+   "signature_kind": "gateway",
+   "signature_valid": true,
+   "score": 0.7766,
+   "judge": {
+    "request_sha256": "b1415299eb0e3e7b24585e156bbb2bad34e3932dc5a6e7a45d0f0a2172b24c8a",
+    "response_sha256": "e847e7868ad62daf1d2c394bb674e7b5a2795b7f625bc15f5fa227a3393a213e",
+    "signature": "0xabd956f92d70d422f1d00c30b37b7d4b249680d7120d1b6b04a1f826a974cd7f338755f5eddee335a649946d7144b9d2edd6e448aecfb72247e3e4ef589858621b",
+    "signed_text": "deepseek-ai/DeepSeek-V4.1-Flash-1017:b1415299eb0e3e7b24585e156bbb2bad34e3932dc5a6e7a45d0f0a2172b24c8a:e847e7868ad62daf1d2c394bb674e7b5a2795b7f625bc15f5fa227a3393a213e",
+    "signature_valid": true,
+    "attempt": 0,
+    "protocol": "v2",
+    "pass": 0
+   }
+  }
+ ],
+ "score_bps": 8560
+}

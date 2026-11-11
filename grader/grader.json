@@ -1,0 +1,7 @@
+{
+ "grader": "blindbench-exact/1",
+ "wasm": "blindbench-grader.wasm",
+ "wasm_sha256": "692f4fe1457844e9483b62dd0f3b073a9cae1d2fbeeb61977075dced7c7c0ae4",
+ "build": "grader/build.sh (Rust 1.97, target wasm32-wasip1)",
+ "system": "You are being evaluated. Think as needed, then end your reply with one line: FINAL: <answer>"
+}

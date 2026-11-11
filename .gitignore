@@ -1,0 +1,7 @@
+node_modules/
+contract/target/
+.blindbench/
+*.salts.json
+proof-*.json
+.env
+private/

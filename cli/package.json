@@ -1,0 +1,24 @@
+{
+  "name": "blindbench-cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "BlindBench runner CLI: private AI evals scored in a NEAR AI TEE, certified on NEAR",
+  "bin": {
+    "blindbench": "./blindbench.mjs"
+  },
+  "scripts": {
+    "demo": "node blindbench.mjs demo",
+    "test": "node --test test/*.test.mjs",
+    "judge": "node scripts/judge.mjs"
+  },
+  "engines": {
+    "node": ">=22.22.2"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "ethers": "^6.15.0",
+    "near-api-js": "^7.4.0",
+    "undici": "^6.29.1"
+  }
+}

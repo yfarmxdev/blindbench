@@ -1,0 +1,114 @@
+[
+ {
+  "model": "anthropic/fable-5.2",
+  "label": "Fable 5.2 (reference)",
+  "dataset_root": "ff9d67e9d4a26f739ca7ac31f88a8f9ea7c1bca9c7921539ac2a5d2a02a1b2a2",
+  "dataset_name": "Legal contract review",
+  "items": 4,
+  "grading": "checklist",
+  "score_bps": 9560,
+  "breakdown": [],
+  "judge_model": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "reference": true,
+  "note": "Judged in the TEE by this set's main judge under the same protocol as the certificates (the judge model's own runs are graded by the alternate judge); answers written outside it, so uncertified.",
+  "date": "2026-11-10"
+ },
+ {
+  "model": "anthropic/fable-5.2",
+  "label": "Fable 5.2 (reference)",
+  "dataset_root": "442b994acc6cdf0d11c7fff54e16c62ee510a4c2b76a2f60f4b08c9d6e1cf041",
+  "dataset_name": "Smart contract audit: three real codebases (private)",
+  "items": 16,
+  "grading": "checklist",
+  "score_bps": 9063,
+  "breakdown": [],
+  "judge_model": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "reference": true,
+  "note": "Judged in the TEE by this set's main judge under the same protocol as the certificates (the judge model's own runs are graded by the alternate judge); answers written outside it, so uncertified.",
+  "date": "2026-11-10"
+ },
+ {
+  "model": "anthropic/fable-5.2",
+  "label": "Fable 5.2 (reference)",
+  "dataset_root": "bc283b83137b4179d368fbaf3493d76a7d4e46e37e5c29e04271427db73e034f",
+  "dataset_name": "On-chain tracing v2 (private)",
+  "items": 5,
+  "grading": "checklist",
+  "score_bps": 7922,
+  "breakdown": [],
+  "judge_model": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+  "reference": true,
+  "note": "Judged in the TEE by this set's main judge under the same protocol as the certificates (the judge model's own runs are graded by the alternate judge); answers written outside it, so uncertified.",
+  "date": "2026-11-10"
+ },
+ {
+  "model": "anthropic/fable-5.2",
+  "label": "Fable 5.2 (reference)",
+  "dataset_root": "1deb2de0d297506d65e3fd988985b4ab175b41f5c7e0a3e6f777c869cb782b3a",
+  "dataset_name": "Coding: spec-exact Python (private)",
+  "items": 12,
+  "grading": "tests",
+  "score_bps": 10000,
+  "breakdown": [
+   {
+    "label": "easy",
+    "items": 3,
+    "score_bps": 10000
+   },
+   {
+    "label": "medium",
+    "items": 4,
+    "score_bps": 10000
+   },
+   {
+    "label": "hard",
+    "items": 3,
+    "score_bps": 10000
+   },
+   {
+    "label": "expert",
+    "items": 2,
+    "score_bps": 10000
+   }
+  ],
+  "judge_model": null,
+  "reference": true,
+  "note": "Floor test: the reference model scores 100%, so this set certifies that a model clears the bar; it does not rank models above it. Hidden tests run locally (objective, no judge); answers written outside the TEE, so uncertified.",
+  "date": "2026-11-10"
+ },
+ {
+  "model": "anthropic/fable-5.2",
+  "label": "Fable 5.2 (reference)",
+  "dataset_root": "2f89b99ff0d369052e22eb25b54aceb34e311678093bd976c6ed5122c28f6900",
+  "dataset_name": "Financial analysis: credit and accounting (private, v1.1)",
+  "items": 26,
+  "grading": "exact",
+  "score_bps": 10000,
+  "breakdown": [
+   {
+    "label": "easy",
+    "items": 4,
+    "score_bps": 10000
+   },
+   {
+    "label": "medium",
+    "items": 9,
+    "score_bps": 10000
+   },
+   {
+    "label": "hard",
+    "items": 13,
+    "score_bps": 10000
+   }
+  ],
+  "judge_model": null,
+  "reference": true,
+  "note": "Floor test: the reference model scores 100%, so this set certifies that a model clears the bar; it does not rank models above it. Exact-match grading (objective, no judge); answers written outside the TEE, so uncertified.",
+  "date": "2026-11-10"
+ },
+ {
+  "model": "moonshotai/kimi-k3",
+  "dataset_root": "1deb2de0d297506d65e3fd988985b4ab175b41f5c7e0a3e6f777c869cb782b3a",
+  "footnote": "Kimi K3 trails the older Kimi K2.6 by 1.2 points, less than one task (8.3 points). Both ran out of the 32k-token limit while thinking on the two hardest tasks and answered them on a second ask with thinking off. A rerun of each kept the order."
+ }
+]

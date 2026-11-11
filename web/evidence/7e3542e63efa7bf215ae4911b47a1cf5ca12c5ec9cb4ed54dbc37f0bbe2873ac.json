@@ -1,0 +1,350 @@
+{
+ "version": "blindbench-evidence/1",
+ "dataset_root": "1deb2de0d297506d65e3fd988985b4ab175b41f5c7e0a3e6f777c869cb782b3a",
+ "grading": "tests",
+ "usage": {
+  "model": {
+   "calls": 23,
+   "prompt_tokens": 17813,
+   "completion_tokens": 399152,
+   "reasoning_tokens": 370378
+  },
+  "judge": {
+   "calls": 0,
+   "prompt_tokens": 0,
+   "completion_tokens": 0,
+   "reasoning_tokens": 0
+  }
+ },
+ "model": "Qwen/Qwen3.8-27B",
+ "judge_model": null,
+ "endpoint": "https://cloud-api.near.ai/v1",
+ "sampling": {
+  "max_tokens": 32768,
+  "temperature": 0.6,
+  "judge_max_tokens": 16384,
+  "judge_temperature": 0,
+  "thinking": true,
+  "model_params": {},
+  "judge_params": {},
+  "samples": 1
+ },
+ "attestation": {
+  "level": "model-enclave",
+  "provider": null,
+  "provider_verdict": null,
+  "signing_addresses": [
+   "0x835ab53d20294ef795906dff21ae4c045336aa26"
+  ],
+  "gateway_addresses": [
+   "0xb98a789cdc4817275f5155593ba73ef2a957e779"
+  ],
+  "signing_algo": "ecdsa",
+  "nonce": "1a82e423a3058c159149bb767151360b77516b8fbb8958acf1fcff8997fdff3e",
+  "report_sha256": "63ff2f9e3034179b1327fe4d3b189d70a229aac44b9f3ff33c5cb4f9ed09b0e3",
+  "simulated": false
+ },
+ "judge_attestation": null,
+ "items": [
+  {
+   "index": 0,
+   "leaf": "1b5ddd230e86c74f9dc0922c71b5e35bde55d134b58acc5e88d57279aba82a4f",
+   "request_sha256": "cb0cb9e786a739245c7603569009ea874dc618491064d67e3d2aa72a91de83be",
+   "response_sha256": "0e876ea815d3057eb55705833561ba6c1c62b7f52a461a590302a3f645927a3f",
+   "chat_id": "d65ecd17d7534f73af64adc20d1b9e0b",
+   "signature": "0x358cdf3a712db322828af4401b7138d7812996ca393c8fd9d68a40eef46adcab146697d97bcdce00b2769a63e5e7ab649800546d8b9b490b655cc16528dbe4e71b",
+   "signed_text": "Qwen/Qwen3.8-27B:cb0cb9e786a739245c7603569009ea874dc618491064d67e3d2aa72a91de83be:0e876ea815d3057eb55705833561ba6c1c62b7f52a461a590302a3f645927a3f",
+   "signing_address": "0x835ab53d20294ef795906dff21ae4c045336aa26",
+   "thinking": false,
+   "empty_retry": true,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 420,
+    "completion_tokens": 737,
+    "reasoning_tokens": 0
+   },
+   "signature_kind": "provider_tee",
+   "signature_valid": true,
+   "score": 0.7692,
+   "judge": null
+  },
+  {
+   "index": 1,
+   "leaf": "e01e7b7736b28f3b458fe41dfb222f41bfa068e6ca491b3d1910da9b444f8cc0",
+   "request_sha256": "ee9f1009377a74805392197289c68a16631db7ef0bd77d89875ca4e0363a7c43",
+   "response_sha256": "b1af6061aaf1ffbd92694690293b966af58ba98eae31fcfb0698b16af74a4484",
+   "chat_id": "7cba2fc572194b2289784b28d42daf23",
+   "signature": "0x7445a9635dc8b5e024f97a1a7d7e113020274bee8de396ca5b17d528349e61f844cbb1f85521aa414d51962d38925e2c90203fec88cc2546dbb931bb385d6ced1b",
+   "signed_text": "Qwen/Qwen3.8-27B:ee9f1009377a74805392197289c68a16631db7ef0bd77d89875ca4e0363a7c43:b1af6061aaf1ffbd92694690293b966af58ba98eae31fcfb0698b16af74a4484",
+   "signing_address": "0x835ab53d20294ef795906dff21ae4c045336aa26",
+   "thinking": false,
+   "empty_retry": true,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 445,
+    "completion_tokens": 1479,
+    "reasoning_tokens": 0
+   },
+   "signature_kind": "provider_tee",
+   "signature_valid": true,
+   "score": 0.9231,
+   "judge": null
+  },
+  {
+   "index": 2,
+   "leaf": "04bb159aafb4517fd9e83ee44922eb771ba96b9971bfaf6a315b5fd0f6b717f9",
+   "request_sha256": "9d35ed122a07700641e23d5f1348f075dfe13354ca8e0abe5c32b999b77ee579",
+   "response_sha256": "2d04337eec4ee538d646e227fc6fecff06ad7eb5a28c864ac168e5610c8dc9f9",
+   "chat_id": "927a15667425499282b5856156aa9317",
+   "signature": "0x2e899accf671e90b79823768b83dfb1d37b14610d5b5218e89047342b641cd821bb924e77b191ffa276499792aa612eccede79ca7ae41b1c1bdae9fd1062a9431b",
+   "signed_text": "Qwen/Qwen3.8-27B:9d35ed122a07700641e23d5f1348f075dfe13354ca8e0abe5c32b999b77ee579:2d04337eec4ee538d646e227fc6fecff06ad7eb5a28c864ac168e5610c8dc9f9",
+   "signing_address": "0x835ab53d20294ef795906dff21ae4c045336aa26",
+   "thinking": false,
+   "empty_retry": true,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 363,
+    "completion_tokens": 960,
+    "reasoning_tokens": 0
+   },
+   "signature_kind": "provider_tee",
+   "signature_valid": true,
+   "score": 0.2727,
+   "judge": null
+  },
+  {
+   "index": 3,
+   "leaf": "13b1347b735ec5b4b6d6a89df172536e01550fbd22f56429885b6254fd4a99a3",
+   "request_sha256": "fcc3c9946f2aa88a2b5565a998d02a67c11850d6f71316035cc2a1e484633d26",
+   "response_sha256": "9f394e9b670646e7b868f3664e4c7a194a66ea23b9e54bf3524877c0b82c1c75",
+   "chat_id": "17b4ca3ea37546628bf060d51ee7914c",
+   "signature": "0xd86fc253dd8f2f7e8812cf98d6924baed945eae35a1ce80d272f02447561db366c89e5f9e9bd8f4b4a3bf6818fd863976cb1aafd361648193cc7ebe4e99519ec1b",
+   "signed_text": "Qwen/Qwen3.8-27B:fcc3c9946f2aa88a2b5565a998d02a67c11850d6f71316035cc2a1e484633d26:9f394e9b670646e7b868f3664e4c7a194a66ea23b9e54bf3524877c0b82c1c75",
+   "signing_address": "0x835ab53d20294ef795906dff21ae4c045336aa26",
+   "thinking": true,
+   "empty_retry": false,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 437,
+    "completion_tokens": 10492,
+    "reasoning_tokens": 9930
+   },
+   "signature_kind": "provider_tee",
+   "signature_valid": true,
+   "score": 1,
+   "judge": null
+  },
+  {
+   "index": 4,
+   "leaf": "494d8454281aa2ad237cbdb459ace11d896d5b289a7dc7118f1216bec0736319",
+   "request_sha256": "373c53b9c565e5dfee01f6b8d6d007a408885041d5620385c513e2f9690da1c6",
+   "response_sha256": "71c2fc6bb5a87484af06f2a452cd67661cf16625d96a4d88f1e46278d6048b21",
+   "chat_id": "551d39d29f8640688404521cb81e8e8f",
+   "signature": "0xc8e64f2c5a275e830f80482b1ba586db49aecc1358cfbdbe8846481b6701baa16416972bcd8065b4d6c649efebd8e49cfd404414acc2b138946aff4800375fe41b",
+   "signed_text": "Qwen/Qwen3.8-27B:373c53b9c565e5dfee01f6b8d6d007a408885041d5620385c513e2f9690da1c6:71c2fc6bb5a87484af06f2a452cd67661cf16625d96a4d88f1e46278d6048b21",
+   "signing_address": "0x835ab53d20294ef795906dff21ae4c045336aa26",
+   "thinking": false,
+   "empty_retry": true,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 456,
+    "completion_tokens": 676,
+    "reasoning_tokens": 0
+   },
+   "signature_kind": "provider_tee",
+   "signature_valid": true,
+   "score": 0.8667,
+   "judge": null
+  },
+  {
+   "index": 5,
+   "leaf": "42e4f910a403029278595d5a8927227f2b253b2e2d2a09b6d2a4631e5bcb3e73",
+   "request_sha256": "f64d467155fcd0d1f5ba105a9a018d99babf8368129e8ab2a91446e8f71d093a",
+   "response_sha256": "938c96104730703504e265a90e1159120875c61d17739e4afae26d094cb93567",
+   "chat_id": "0cafac2361184a2e9143432c59bd4efd",
+   "signature": "0x1db4329b4500d5fe291217b4894f4879c08cec6df3f08c83e8bb13acf0ea904725a4e14d9a62b85e4465106bce8791170adc57c704c2c41d9f0ec0712d0768861c",
+   "signed_text": "Qwen/Qwen3.8-27B:f64d467155fcd0d1f5ba105a9a018d99babf8368129e8ab2a91446e8f71d093a:938c96104730703504e265a90e1159120875c61d17739e4afae26d094cb93567",
+   "signing_address": "0x835ab53d20294ef795906dff21ae4c045336aa26",
+   "thinking": false,
+   "empty_retry": true,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 503,
+    "completion_tokens": 1438,
+    "reasoning_tokens": 0
+   },
+   "signature_kind": "provider_tee",
+   "signature_valid": true,
+   "score": 0.8571,
+   "judge": null
+  },
+  {
+   "index": 6,
+   "leaf": "09b5ccec281e3da0601baccc78f6bca937b6388619350cb943af971d1129ffdf",
+   "request_sha256": "5657616a53da3e2f58ab148e2a087c64424a01ec789527b8b14c24604b7120db",
+   "response_sha256": "f13cc6cba73176fb6bc83a51b1789dd76786151fc0727ecb76adcf66805746d2",
+   "chat_id": "175cd56c257e4bceaa1a4d3cc2d5e88f",
+   "signature": "0x02017c2d8066ae0e5b2f6579316c3268fe554613847b0e2b95793c4f7e5b619d0a1c79e2743d833672cc5f4dcfc4add18bec528b1e49790f7ce1b0bf4a748d5a1b",
+   "signed_text": "Qwen/Qwen3.8-27B:5657616a53da3e2f58ab148e2a087c64424a01ec789527b8b14c24604b7120db:f13cc6cba73176fb6bc83a51b1789dd76786151fc0727ecb76adcf66805746d2",
+   "signing_address": "0x835ab53d20294ef795906dff21ae4c045336aa26",
+   "thinking": false,
+   "empty_retry": true,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 347,
+    "completion_tokens": 1322,
+    "reasoning_tokens": 0
+   },
+   "signature_kind": "provider_tee",
+   "signature_valid": true,
+   "score": 1,
+   "judge": null
+  },
+  {
+   "index": 7,
+   "leaf": "c702f86cb7fde8fdef5d131f257e9f77b036b41cd680c22c4ff4aa4cfc7745c6",
+   "request_sha256": "e8c224ba61069de113cc74ecbf731cb3bc1a40660fc6e3f9e6ef836bacc7711e",
+   "response_sha256": "34c3380b7625c0d949511b1e2c70ed88c80ad7ed4f8b35066a9b5b2b24d316c5",
+   "chat_id": "406625d9712344e088ccdee2d8eaebaf",
+   "signature": "0x5762b2f4ad30a7363559a5d9712f1a85de045c0cd0450f8ab04e64aa5388b07c2d53a0cb8af358a3f40df2e5ba18ae3eb4c4691bfe0466820f6d5aaa90b760c61b",
+   "signed_text": "Qwen/Qwen3.8-27B:e8c224ba61069de113cc74ecbf731cb3bc1a40660fc6e3f9e6ef836bacc7711e:34c3380b7625c0d949511b1e2c70ed88c80ad7ed4f8b35066a9b5b2b24d316c5",
+   "signing_address": "0x835ab53d20294ef795906dff21ae4c045336aa26",
+   "thinking": false,
+   "empty_retry": true,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 531,
+    "completion_tokens": 2792,
+    "reasoning_tokens": 0
+   },
+   "signature_kind": "provider_tee",
+   "signature_valid": true,
+   "score": 0.8421,
+   "judge": null
+  },
+  {
+   "index": 8,
+   "leaf": "b0f719c2f573dbad2719ea7d01a89b6e6e59dfcc897cd85409a638cd549e9320",
+   "request_sha256": "e43c697c65aee8350b268709c409fdca3c34752bb343d3d7d6b70d2756159cd2",
+   "response_sha256": "93e18f601dac24c26661cf0e0bde84416f970a1def7671aefbeb0701630424dd",
+   "chat_id": "79f9726b244949c1bb901b49a28bbc8f",
+   "signature": "0xad1a1ceec2c87740506c20fd2042229e1cf39c1ab9f43351b82fba20a76f0f7d57aa0fc830ffd73f53fa4d14d61dadb5b2132b938eff7b3c9270730a03be84c81b",
+   "signed_text": "Qwen/Qwen3.8-27B:e43c697c65aee8350b268709c409fdca3c34752bb343d3d7d6b70d2756159cd2:93e18f601dac24c26661cf0e0bde84416f970a1def7671aefbeb0701630424dd",
+   "signing_address": "0x835ab53d20294ef795906dff21ae4c045336aa26",
+   "thinking": false,
+   "empty_retry": true,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 1464,
+    "completion_tokens": 1293,
+    "reasoning_tokens": 0
+   },
+   "signature_kind": "provider_tee",
+   "signature_valid": true,
+   "score": 0.85,
+   "judge": null
+  },
+  {
+   "index": 9,
+   "leaf": "49add6adebf49a7051f59f6b8ac00f798b172fc84fa60e42334b68a2b6781a1f",
+   "request_sha256": "df6cba834afbc083878ca5a04e85f7a77b4bcdae8117d18f236a2e03d7c2a9a1",
+   "response_sha256": "419725a63ce3b3de2b19a93c6d76c02d29780e6a8a892c8fb10d4659f8a55a98",
+   "chat_id": "6c2f22ece8da462ba711fc87c42a3ca5",
+   "signature": "0xee5a457e1f27396ec2f6beb2a52beec12b510d6fed49a6874de717f842d0ae0264888cfbc26e097c1be62e0096d6cfa580a195910ae3916d628005fa33ded63c1c",
+   "signed_text": "Qwen/Qwen3.8-27B:df6cba834afbc083878ca5a04e85f7a77b4bcdae8117d18f236a2e03d7c2a9a1:419725a63ce3b3de2b19a93c6d76c02d29780e6a8a892c8fb10d4659f8a55a98",
+   "signing_address": "0x835ab53d20294ef795906dff21ae4c045336aa26",
+   "thinking": false,
+   "empty_retry": true,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 737,
+    "completion_tokens": 1226,
+    "reasoning_tokens": 0
+   },
+   "signature_kind": "provider_tee",
+   "signature_valid": true,
+   "score": 0.9231,
+   "judge": null
+  },
+  {
+   "index": 10,
+   "leaf": "a3971f34d5c86f036446680a788041778cfb298b19c9b72f69f90607e6ca4655",
+   "request_sha256": "de08219571d184eddf939963b1b6a4582d40fa2166d8b542c58bd82708dee3cc",
+   "response_sha256": "f14de89506d387f6e7cb6e52df5df87392bdd0194b4cb3bc076d874fe84d6fed",
+   "chat_id": "af0296ea33ef488388528213ab0a8717",
+   "signature": "0xc5def585831fd49f5712d8c0553f5c2e2f7106c40db73dde1cfc3761909cd59b0c0e16620c9868d8158f4b80bac298a9890526ebea9dd7c78e6d58c59ff7fd3a1c",
+   "signed_text": "Qwen/Qwen3.8-27B:de08219571d184eddf939963b1b6a4582d40fa2166d8b542c58bd82708dee3cc:f14de89506d387f6e7cb6e52df5df87392bdd0194b4cb3bc076d874fe84d6fed",
+   "signing_address": "0x835ab53d20294ef795906dff21ae4c045336aa26",
+   "thinking": false,
+   "empty_retry": true,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 2098,
+    "completion_tokens": 11235,
+    "reasoning_tokens": 0
+   },
+   "signature_kind": "provider_tee",
+   "signature_valid": true,
+   "score": 0,
+   "judge": null
+  },
+  {
+   "index": 11,
+   "leaf": "47078bfe3c50252422ef6b85ad79372a829e6702f3cc39f73034694498039931",
+   "request_sha256": "9a1c11efcd9b9e2dbd5b07b784adeb98510a508ce4435932d448fde5c3a60c35",
+   "response_sha256": "4b98057ba5f27c921e1b92d8b1bab4569aa12e174367017e34b0a5f8da0aaa4e",
+   "chat_id": "65d8e92546db4b888265bb3d2bb99187",
+   "signature": "0x84e903426d30cc4e92fa82f444b19ac939b538c508a2596d4bf6454fa83939bc6fa377b51cfd52158b71b131d456086d1c97475713fda8b4739fd02139df6faa1c",
+   "signed_text": "Qwen/Qwen3.8-27B:9a1c11efcd9b9e2dbd5b07b784adeb98510a508ce4435932d448fde5c3a60c35:4b98057ba5f27c921e1b92d8b1bab4569aa12e174367017e34b0a5f8da0aaa4e",
+   "signing_address": "0x835ab53d20294ef795906dff21ae4c045336aa26",
+   "thinking": false,
+   "empty_retry": true,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 1126,
+    "completion_tokens": 5054,
+    "reasoning_tokens": 0
+   },
+   "signature_kind": "provider_tee",
+   "signature_valid": true,
+   "score": 0.1579,
+   "judge": null
+  }
+ ],
+ "score_bps": 7052,
+ "breakdown": [
+  {
+   "label": "easy",
+   "items": 3,
+   "score_bps": 6550
+  },
+  {
+   "label": "medium",
+   "items": 4,
+   "score_bps": 9310
+  },
+  {
+   "label": "hard",
+   "items": 3,
+   "score_bps": 8717
+  },
+  {
+   "label": "expert",
+   "items": 2,
+   "score_bps": 790
+  }
+ ],
+ "resumed_answers": 10
+}

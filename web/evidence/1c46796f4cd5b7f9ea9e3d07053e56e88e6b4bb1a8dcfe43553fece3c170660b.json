@@ -1,0 +1,352 @@
+{
+ "version": "blindbench-evidence/1",
+ "dataset_root": "1deb2de0d297506d65e3fd988985b4ab175b41f5c7e0a3e6f777c869cb782b3a",
+ "grading": "tests",
+ "usage": {
+  "model": {
+   "calls": 14,
+   "prompt_tokens": 12620,
+   "completion_tokens": 150874,
+   "reasoning_tokens": 128307
+  },
+  "judge": {
+   "calls": 0,
+   "prompt_tokens": 0,
+   "completion_tokens": 0,
+   "reasoning_tokens": 0
+  }
+ },
+ "model": "moonshotai/kimi-k3",
+ "judge_model": null,
+ "endpoint": "https://cloud-api.near.ai/v1",
+ "sampling": {
+  "max_tokens": 32768,
+  "temperature": 0.6,
+  "judge_max_tokens": 16384,
+  "judge_temperature": 0,
+  "thinking": true,
+  "model_params": {},
+  "judge_params": {},
+  "samples": 1
+ },
+ "attestation": {
+  "level": "gateway+3p-enclave",
+  "provider": "chutes",
+  "provider_verdict": {
+   "verified": true,
+   "tcb_status": "UpToDate",
+   "gpu_verdict": "PASS"
+  },
+  "signing_addresses": [
+   "0xb98a789cdc4817275f5155593ba73ef2a957e779"
+  ],
+  "gateway_addresses": [],
+  "signing_algo": "ecdsa",
+  "nonce": "2f8ce243f4daf0356d2e1871c484b9842f6b9059854c5513f7b3b0c9cd6d2b52",
+  "report_sha256": "9b2e279647df3f5b3405497a5115460ba181bfb54db56df852c57dbb5105a5a0",
+  "simulated": false
+ },
+ "judge_attestation": null,
+ "items": [
+  {
+   "index": 0,
+   "leaf": "1b5ddd230e86c74f9dc0922c71b5e35bde55d134b58acc5e88d57279aba82a4f",
+   "request_sha256": "20a3d8847ecb6ef01dd97cbfde2d55ed2c8e927fc5d63b64a2e910e869b86453",
+   "response_sha256": "dffd759266edb8be0bbd5b684310ad0846aced1a69f9501016f0694e258a5d49",
+   "chat_id": "94bd07cfcb434ea5a94c5e2c24cc5f7c",
+   "signature": "0x0e32556d73f3262ea7a762a19f5afa10201d40279e3e3ecf5caed305059be0fa2f94e2f511186905f20cba5fe5f86d83a5583f01f21b0325d27ba45f7c5783b21c",
+   "signed_text": "20a3d8847ecb6ef01dd97cbfde2d55ed2c8e927fc5d63b64a2e910e869b86453:dffd759266edb8be0bbd5b684310ad0846aced1a69f9501016f0694e258a5d49",
+   "signing_address": "0xb98a789cdc4817275f5155593ba73ef2a957e779",
+   "thinking": true,
+   "empty_retry": false,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 470,
+    "completion_tokens": 1513,
+    "reasoning_tokens": 881
+   },
+   "signature_kind": "gateway",
+   "signature_valid": true,
+   "score": 1,
+   "judge": null
+  },
+  {
+   "index": 1,
+   "leaf": "e01e7b7736b28f3b458fe41dfb222f41bfa068e6ca491b3d1910da9b444f8cc0",
+   "request_sha256": "d610e2f6903b70aaa7d4428190cc3f86d7374fc558092cb9f87b502a4b2fab85",
+   "response_sha256": "ffe74f4e1fca680c07b547f3cce318dc31092c033da0819350464b8c2eb0c44a",
+   "chat_id": "aacf52b5d5144ac0bed16728fbb50410",
+   "signature": "0x12c858e610c9322b5b1eec0bfba06efc33f89ea513283a234da23239b03ecf126816486c0b1f03f559ffb241287dda10fa26288ed362c5dc474a32f232f6d0561c",
+   "signed_text": "d610e2f6903b70aaa7d4428190cc3f86d7374fc558092cb9f87b502a4b2fab85:ffe74f4e1fca680c07b547f3cce318dc31092c033da0819350464b8c2eb0c44a",
+   "signing_address": "0xb98a789cdc4817275f5155593ba73ef2a957e779",
+   "thinking": true,
+   "empty_retry": false,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 513,
+    "completion_tokens": 4515,
+    "reasoning_tokens": 3735
+   },
+   "signature_kind": "gateway",
+   "signature_valid": true,
+   "score": 1,
+   "judge": null
+  },
+  {
+   "index": 2,
+   "leaf": "04bb159aafb4517fd9e83ee44922eb771ba96b9971bfaf6a315b5fd0f6b717f9",
+   "request_sha256": "33954f2ab00e0df1605ccc8b8ffd0329fa7c7fd67529bdea5249a273aa770f5f",
+   "response_sha256": "f61bb451e0781e133fdeba3ace77cb022f5a68307718f2801bdb30a374ffdc42",
+   "chat_id": "0bf730ae44b54ad4bd1557df1534a3c4",
+   "signature": "0x9790bc9d8920960a28a3b6a0a938fcf1cd40e0e365125fd88e157dc59a6235f80fd8febd7207921cade7fa6a2695c0a5025b69f253d13a0c28ba460d7173dff91c",
+   "signed_text": "33954f2ab00e0df1605ccc8b8ffd0329fa7c7fd67529bdea5249a273aa770f5f:f61bb451e0781e133fdeba3ace77cb022f5a68307718f2801bdb30a374ffdc42",
+   "signing_address": "0xb98a789cdc4817275f5155593ba73ef2a957e779",
+   "thinking": true,
+   "empty_retry": false,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 421,
+    "completion_tokens": 3062,
+    "reasoning_tokens": 2304
+   },
+   "signature_kind": "gateway",
+   "signature_valid": true,
+   "score": 1,
+   "judge": null
+  },
+  {
+   "index": 3,
+   "leaf": "13b1347b735ec5b4b6d6a89df172536e01550fbd22f56429885b6254fd4a99a3",
+   "request_sha256": "f32621a2caec8f1fdcdc39576bac9aacd57962e21f772556c8a9ef6f78a50e0e",
+   "response_sha256": "0de7f92e0fe42a9e83be8fd8399d497692085fc66b7a4773d717f02bb91da5e2",
+   "chat_id": "a095cf10a88a4f7aaa5f478a577827ec",
+   "signature": "0xb7bc4c6d8da4ffe40dcc8e456643fbc4d50a6d41f622e3c114dc7581e47ac6950b8d341a958e99e47b1f9058bc20250d7a91f69d5802c2bb521423e687dbfebc1b",
+   "signed_text": "f32621a2caec8f1fdcdc39576bac9aacd57962e21f772556c8a9ef6f78a50e0e:0de7f92e0fe42a9e83be8fd8399d497692085fc66b7a4773d717f02bb91da5e2",
+   "signing_address": "0xb98a789cdc4817275f5155593ba73ef2a957e779",
+   "thinking": true,
+   "empty_retry": false,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 459,
+    "completion_tokens": 910,
+    "reasoning_tokens": 454
+   },
+   "signature_kind": "gateway",
+   "signature_valid": true,
+   "score": 1,
+   "judge": null
+  },
+  {
+   "index": 4,
+   "leaf": "494d8454281aa2ad237cbdb459ace11d896d5b289a7dc7118f1216bec0736319",
+   "request_sha256": "36f0652f30eab4d2c26c6a353068ee6206d6a7e6887e279ea125305064651811",
+   "response_sha256": "f6f5fc7dd7e504f32368690e3892e119677b4631b71730459fdbbd531a066a37",
+   "chat_id": "79c3ef8442b44cad8d06bb30febd6d0b",
+   "signature": "0x55c39961412df3c68bb56c1befb72dfdc0c8e8183200db99af698c2ba1bd7b194135ba29ca406455e3ba2614b44b44ef2345b4aa2031ef0f3a45ad5c18f4a15d1c",
+   "signed_text": "36f0652f30eab4d2c26c6a353068ee6206d6a7e6887e279ea125305064651811:f6f5fc7dd7e504f32368690e3892e119677b4631b71730459fdbbd531a066a37",
+   "signing_address": "0xb98a789cdc4817275f5155593ba73ef2a957e779",
+   "thinking": true,
+   "empty_retry": false,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 517,
+    "completion_tokens": 5956,
+    "reasoning_tokens": 5260
+   },
+   "signature_kind": "gateway",
+   "signature_valid": true,
+   "score": 1,
+   "judge": null
+  },
+  {
+   "index": 5,
+   "leaf": "42e4f910a403029278595d5a8927227f2b253b2e2d2a09b6d2a4631e5bcb3e73",
+   "request_sha256": "ce08ac783e2a31b657418226a5235b3f97f1ba821c84880c40b4ac15b125123d",
+   "response_sha256": "d29da7effbbf7834c963dcd42ebf0776b3d72417c81ad0c1cf9a0eea273a038a",
+   "chat_id": "781f5d88f45842a89fe8351ea163dc71",
+   "signature": "0x5159c1e92772f6b9a09b582ac728a99c770d63c57ebf17b9925044b12e0fed55192237b1ec5f499fc5247fdca60b830e193bf373916d1fb22be59c712e27d1df1c",
+   "signed_text": "ce08ac783e2a31b657418226a5235b3f97f1ba821c84880c40b4ac15b125123d:d29da7effbbf7834c963dcd42ebf0776b3d72417c81ad0c1cf9a0eea273a038a",
+   "signing_address": "0xb98a789cdc4817275f5155593ba73ef2a957e779",
+   "thinking": true,
+   "empty_retry": false,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 565,
+    "completion_tokens": 12736,
+    "reasoning_tokens": 11414
+   },
+   "signature_kind": "gateway",
+   "signature_valid": true,
+   "score": 1,
+   "judge": null
+  },
+  {
+   "index": 6,
+   "leaf": "09b5ccec281e3da0601baccc78f6bca937b6388619350cb943af971d1129ffdf",
+   "request_sha256": "d6e67605e07fbeca6bb5101e3e9a9ea6130bbc6c3c8ff5bff58c4262345333e6",
+   "response_sha256": "cb01b41bc72f3b611307310d3a5a599760f39347eae54ecdfaabb5608b2254ef",
+   "chat_id": "908871bc8c0043a59de5d5b3cf3e73d5",
+   "signature": "0x79593edb18814033198cae468d702f1d0942508f44f0caf822ac017aaac190a0019e73b0b99fec5085077ca493ad7a9c44b8e0f64ccad653a3c41ab9cf6d280c1c",
+   "signed_text": "d6e67605e07fbeca6bb5101e3e9a9ea6130bbc6c3c8ff5bff58c4262345333e6:cb01b41bc72f3b611307310d3a5a599760f39347eae54ecdfaabb5608b2254ef",
+   "signing_address": "0xb98a789cdc4817275f5155593ba73ef2a957e779",
+   "thinking": true,
+   "empty_retry": false,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 414,
+    "completion_tokens": 7726,
+    "reasoning_tokens": 6752
+   },
+   "signature_kind": "gateway",
+   "signature_valid": true,
+   "score": 1,
+   "judge": null
+  },
+  {
+   "index": 7,
+   "leaf": "c702f86cb7fde8fdef5d131f257e9f77b036b41cd680c22c4ff4aa4cfc7745c6",
+   "request_sha256": "ed703d9f0e4048084a28cd9b6990cf2037e3515271035193c2f363c9861efe3d",
+   "response_sha256": "2f1eb94d1be1ef0897e064c1e760c80d24e3989c554118345e53b828e9de0bc4",
+   "chat_id": "633db232007046459ba54492701a711a",
+   "signature": "0xe46d3a9f13cbe37a63e3b84d6fa1f29b4f6ad99c88b2f701ee2d5fd6d5854f444253c3c3e1ee7f25025054fc7c880097752dc8f1fc3dae13fdd848526c0916da1b",
+   "signed_text": "ed703d9f0e4048084a28cd9b6990cf2037e3515271035193c2f363c9861efe3d:2f1eb94d1be1ef0897e064c1e760c80d24e3989c554118345e53b828e9de0bc4",
+   "signing_address": "0xb98a789cdc4817275f5155593ba73ef2a957e779",
+   "thinking": true,
+   "empty_retry": false,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 587,
+    "completion_tokens": 18694,
+    "reasoning_tokens": 16949
+   },
+   "signature_kind": "gateway",
+   "signature_valid": true,
+   "score": 0.9474,
+   "judge": null
+  },
+  {
+   "index": 8,
+   "leaf": "b0f719c2f573dbad2719ea7d01a89b6e6e59dfcc897cd85409a638cd549e9320",
+   "request_sha256": "533b5ccbfe850e797090ab57240edf98fe7b55f6f8064625176a7c79c76f40c1",
+   "response_sha256": "0862e89731b1ed04564d3a9179df6094376c43ae29d0c9786aebcd2d070aa710",
+   "chat_id": "a5db270beb68427d814f11ac9be6552d",
+   "signature": "0x76a70996c02d6981fddef517d8ae84560ae1f020038a05fca1f0365219448ae9004b2382c14408fcec8feb40c9b8ffdc9a382586c3cf48143c86cbb0762ed52f1c",
+   "signed_text": "533b5ccbfe850e797090ab57240edf98fe7b55f6f8064625176a7c79c76f40c1:0862e89731b1ed04564d3a9179df6094376c43ae29d0c9786aebcd2d070aa710",
+   "signing_address": "0xb98a789cdc4817275f5155593ba73ef2a957e779",
+   "thinking": true,
+   "empty_retry": false,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 1481,
+    "completion_tokens": 8131,
+    "reasoning_tokens": 7242
+   },
+   "signature_kind": "gateway",
+   "signature_valid": true,
+   "score": 1,
+   "judge": null
+  },
+  {
+   "index": 9,
+   "leaf": "49add6adebf49a7051f59f6b8ac00f798b172fc84fa60e42334b68a2b6781a1f",
+   "request_sha256": "dd2040d37f0965c1e146b256b12f82d27558726dd1f5305a33afac59f72dcc75",
+   "response_sha256": "341c67bddaf8a0f0a7088283e5fbeb5633d595dff4db052f7b019c25297f9663",
+   "chat_id": "a58d564b9f8a4585b535613ee5d80bbc",
+   "signature": "0xbbf11a9147670a8d8fbd416667ebb9c4f93b205ad8a370835e05bfdadec2b43c5cb737fb5847e592c10ee0b97d8a71e01807c9360c917e057968f67d41b4a88c1b",
+   "signed_text": "dd2040d37f0965c1e146b256b12f82d27558726dd1f5305a33afac59f72dcc75:341c67bddaf8a0f0a7088283e5fbeb5633d595dff4db052f7b019c25297f9663",
+   "signing_address": "0xb98a789cdc4817275f5155593ba73ef2a957e779",
+   "thinking": true,
+   "empty_retry": false,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 773,
+    "completion_tokens": 8988,
+    "reasoning_tokens": 7780
+   },
+   "signature_kind": "gateway",
+   "signature_valid": true,
+   "score": 1,
+   "judge": null
+  },
+  {
+   "index": 10,
+   "leaf": "a3971f34d5c86f036446680a788041778cfb298b19c9b72f69f90607e6ca4655",
+   "request_sha256": "e1705054c2a02f1375e05b010a319fd1673cfe6ab373714dbb786b82e946b5b1",
+   "response_sha256": "8d346fd15c822ef5380daccde4f39b8f08e37d7ba8fbf7bba9977233bcc4086a",
+   "chat_id": "5b72fa998c4540269c6e850d9538eb7b",
+   "signature": "0xbe34bc0b099da127e3c17baab3b4952bd662cb1900db98d241840f21ca73621a698b8b2c619d41cc3b70539d6fc2946c16da0a98f8cfc2a37edece4d6fa7b0211b",
+   "signed_text": "e1705054c2a02f1375e05b010a319fd1673cfe6ab373714dbb786b82e946b5b1:8d346fd15c822ef5380daccde4f39b8f08e37d7ba8fbf7bba9977233bcc4086a",
+   "signing_address": "0xb98a789cdc4817275f5155593ba73ef2a957e779",
+   "thinking": false,
+   "empty_retry": true,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 2042,
+    "completion_tokens": 7330,
+    "reasoning_tokens": 0
+   },
+   "signature_kind": "gateway",
+   "signature_valid": true,
+   "score": 0.25,
+   "judge": null
+  },
+  {
+   "index": 11,
+   "leaf": "47078bfe3c50252422ef6b85ad79372a829e6702f3cc39f73034694498039931",
+   "request_sha256": "55af2254a92eed3012f5bc89ab91b5983e50fe2cc52f58229afdd23ab1168d9b",
+   "response_sha256": "d184caabc672044752933f2a2da6af96b768cf1066a6b7465e9d3d665d66f3d1",
+   "chat_id": "8381c56c114a4d129101ec88c0342363",
+   "signature": "0x64ee0e589626a25751ba91956893ae3e6fbbec866c0f030a5b9e4e4e5634d61327a893b903e651da905ecc2c03731a32d32af8cc02322ee32bdf7c5f5eecea8b1c",
+   "signed_text": "55af2254a92eed3012f5bc89ab91b5983e50fe2cc52f58229afdd23ab1168d9b:d184caabc672044752933f2a2da6af96b768cf1066a6b7465e9d3d665d66f3d1",
+   "signing_address": "0xb98a789cdc4817275f5155593ba73ef2a957e779",
+   "thinking": false,
+   "empty_retry": true,
+   "empty": false,
+   "finish_reason": "stop",
+   "usage": {
+    "prompt_tokens": 1101,
+    "completion_tokens": 5777,
+    "reasoning_tokens": 0
+   },
+   "signature_kind": "gateway",
+   "signature_valid": true,
+   "score": 0.3684,
+   "judge": null
+  }
+ ],
+ "score_bps": 8805,
+ "breakdown": [
+  {
+   "label": "easy",
+   "items": 3,
+   "score_bps": 10000
+  },
+  {
+   "label": "medium",
+   "items": 4,
+   "score_bps": 10000
+  },
+  {
+   "label": "hard",
+   "items": 3,
+   "score_bps": 9825
+  },
+  {
+   "label": "expert",
+   "items": 2,
+   "score_bps": 3092
+  }
+ ],
+ "resumed_answers": 10
+}
